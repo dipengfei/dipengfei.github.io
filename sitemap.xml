@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://danielpf.me/2020/04/08/logback-msteams-appender-plus/</loc>
+    
+    <lastmod>2020-04-08T13:57:33.502Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://danielpf.me/2020/04/06/kickoff2020/</loc>
     
     <lastmod>2020-04-06T12:59:14.723Z</lastmod>
