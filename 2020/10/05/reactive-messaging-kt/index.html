@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Kotlin + Spring Cloud Stream构建实时消息系统 | 鹏飞Daniel的技术足迹 | 尔曹身与名俱灭,不废江河万古流</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="spring,kotlin,reactive">
+    <meta name="description" content="作为一门新兴的现代化编程语言，Kotlin正获得广泛的关注，Spring社区也将支持Kotlin语言作为下一阶段的重要工作，甚至抛出了Spring Loves Kotin和A Match Made in Heaven这般暧昧的论调。本文暂不去讨论Kotlin语言的细节，而是通过使用Kotlin和Spring Cloud Stream构建实时消息系统来领略一番Spring Loves Kotlin的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kotlin + Spring Cloud Stream构建实时消息系统">
+<meta property="og:url" content="https://danielpf.me/2020/10/05/reactive-messaging-kt/index.html">
+<meta property="og:site_name" content="鹏飞Daniel的技术足迹">
+<meta property="og:description" content="作为一门新兴的现代化编程语言，Kotlin正获得广泛的关注，Spring社区也将支持Kotlin语言作为下一阶段的重要工作，甚至抛出了Spring Loves Kotin和A Match Made in Heaven这般暧昧的论调。本文暂不去讨论Kotlin语言的细节，而是通过使用Kotlin和Spring Cloud Stream构建实时消息系统来领略一番Spring Loves Kotlin的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-05T14:19:22.000Z">
+<meta property="article:modified_time" content="2020-10-05T07:02:52.699Z">
+<meta property="article:author" content="鹏飞Daniel">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="kotlin">
+<meta property="article:tag" content="reactive">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="鹏飞Daniel的技术足迹" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar-yumao.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">鹏飞Daniel</h5>
+          <a href="mailto:dipengfei1982@gmail.com" title="dipengfei1982@gmail.com" class="mail">dipengfei1982@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/dipengfei" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://www.linkedin.com/in/daniel-pf" target="_blank" >
+                <i class="icon icon-lg icon-linkedin"></i>
+                Linkedin
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Kotlin + Spring Cloud Stream构建实时消息系统</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Kotlin + Spring Cloud Stream构建实时消息系统</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2020-10-05T14:19:22.000Z" itemprop="datePublished" class="page-time">
+  2020-10-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E5%AE%9E%E8%B7%B5/">实践</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#系统架构"><span class="post-toc-number">1.</span> <span class="post-toc-text">系统架构</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#项目模块"><span class="post-toc-number">2.</span> <span class="post-toc-text">项目模块</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码实现"><span class="post-toc-number">3.</span> <span class="post-toc-text">代码实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Core"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">Core</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Producer"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">Producer</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Processor"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">Processor</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Consumer"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">Consumer</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Notifier"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">Notifier</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#运行"><span class="post-toc-number">4.</span> <span class="post-toc-text">运行</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-reactive-messaging-kt"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Kotlin + Spring Cloud Stream构建实时消息系统</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2020-10-05 22:19:22" datetime="2020-10-05T14:19:22.000Z"  itemprop="datePublished">2020-10-05</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E5%AE%9E%E8%B7%B5/">实践</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>作为一门新兴的现代化编程语言，<a href="https://kotlinlang.org/" target="_blank" rel="noopener">Kotlin</a>正获得广泛的关注，<a href="https://spring.io/" target="_blank" rel="noopener">Spring</a>社区也将支持<code>Kotlin</code>语言作为下一阶段的<a href="https://blog.jetbrains.com/kotlin/2020/08/the-state-of-kotlin-support-in-spring/" target="_blank" rel="noopener">重要工作</a>，甚至抛出了<a href="https://speakerdeck.com/sdeleuze/why-spring-loves-kotlin" target="_blank" rel="noopener">Spring Loves Kotin</a>和<a href="https://kotlin.link/articles/Spring-Boot-and-Kotlin-a-match-made-in-Heaven.html" target="_blank" rel="noopener">A Match Made in Heaven</a>这般暧昧的论调。本文暂不去讨论<code>Kotlin</code>语言的细节，而是通过使用<code>Kotlin</code>和<a href="https://spring.io/projects/spring-cloud-stream" target="_blank" rel="noopener">Spring Cloud Stream</a>构建实时消息系统来领略一番<code>Spring Loves Kotlin</code>的魅力。</p>
+<a id="more"></a>
+
+<h3 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h3><p><code>实时消息系统</code>可适用于多种业务场景，本文将实现一个非常典型的案例，其它复杂案例都可以通过此案例扩展，其架构如下图所示：</p>
+<pre class="mermaid">graph LR;
+    A(1.Producer)-->|MQ|B(2.Processor);
+    B-->|MQ|C(3.Consumer);
+    C-->|Pub-Sub|D(4.Notifier);
+    D-->|Http|E((5.Client));</pre>
+<p>下面对各模块进行简要说明，</p>
+<ol>
+<li><code>Producer</code>: 作为数据源产生数据，并将数据通过<code>MQ</code>传给后面的<code>Processor</code>进行处理;</li>
+<li><code>Processor</code>: 在<code>MQ</code>中读取<code>Producer</code>产生的消息并加以处理，并将处理后的结果通过<code>MQ</code>传给后面的<code>Consumer</code>;</li>
+<li><code>Consumer</code>: 在<code>MQ</code>中读取<code>Processor</code>产生的消息并转发至<code>Redis</code>中的<code>Pub-Sub Topic</code>;</li>
+<li><code>Notifier</code>: 订阅<code>Redis</code>中的<code>Pub-Sub Topic</code>并处理由<code>Consumer</code>发布的消息，并通过<code>SSE</code>转发给订阅消息的<code>Client</code>;</li>
+<li><code>Client</code>: 通过<code>Http</code>订阅由<code>Notifier</code>发布的<code>SSE</code>事件;</li>
+</ol>
+<p>本文中的案例将会实现模块1～4，模块5<code>Client</code>不做实现，可通过<code>curl</code>等http客户端进行模拟。</p>
+<h3 id="项目模块"><a href="#项目模块" class="headerlink" title="项目模块"></a>项目模块</h3><p>按照上面讨论的系统架构，我们创建一个多模块的<a href="https://gradle.org/" target="_blank" rel="noopener">Gradle</a>项目，并用<a href="https://docs.gradle.org/current/userguide/kotlin_dsl.html" target="_blank" rel="noopener">Kotlin DSL</a>作为描述语言，<a href="https://github.com/dipengfei/reactive-messaging-kt" target="_blank" rel="noopener">项目</a>结构如下图所示：</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── gradle</span><br><span class="line">│   └── wrapper</span><br><span class="line">├── rmkt-consumer</span><br><span class="line">│   ├── src</span><br><span class="line">│   └── build.gradle.kts</span><br><span class="line">├── rmkt-core</span><br><span class="line">│   ├── src</span><br><span class="line">│   └── build.gradle.kts</span><br><span class="line">├── rmkt-notifier</span><br><span class="line">│   ├── src</span><br><span class="line">│   └── build.gradle.kts</span><br><span class="line">├── rmkt-processor</span><br><span class="line">│   ├── src</span><br><span class="line">│   └── build.gradle.kts</span><br><span class="line">├── rmkt-producer</span><br><span class="line">│   ├── src</span><br><span class="line">│   └── build.gradle.kts</span><br><span class="line">├── HELP.md</span><br><span class="line">├── README.md</span><br><span class="line">├── build.gradle.kts</span><br><span class="line">├── gradlew</span><br><span class="line">├── gradlew.bat</span><br><span class="line">└── settings.gradle.kts</span><br></pre></td></tr></table></figure>
+
+<p>这些模块都可以与上面讨论过的<a href="#系统架构">系统架构</a>一一对应，唯一的不同点是项目中多出了一个<code>core</code>模块，该模块用于放置各模块的公用部分，例如<code>domain</code>对象、<code>常量定义</code>以及<code>公共方法</code>等，稍后我们会详细说明。本文不会讨论<code>Kotlin DSL</code>的细节，由于没有涉及过多的知识点，各模块的<code>build.gradle.kts</code>文件(类似于<code>Maven</code>中的<code>pom.xml</code>文件)应该不会影响大家对代码的理解。</p>
+<p>下面简要说明一下该系统的业务逻辑：</p>
+<ol>
+<li><code>Producter</code>每隔1秒钟产生一个<code>Product</code>消息，每个<code>Product</code>包含唯一的<code>id</code>和随机产生的<code>name</code>、<code>price</code>以及<code>createdTime</code>;</li>
+<li><code>Processor</code>处理<code>Product</code>消息，根据预先定义的<code>ExchangeRate</code>来计算<code>Product</code>在多种货币下的价格，并生成<code>ProductExchange</code>对象;</li>
+<li><code>Consumer</code>收到<code>ProductExchange</code>对象后，过滤价格小于<code>500</code>的，并将其转发至<code>Redis</code>的<code>Pub-Sub Topic</code>中;</li>
+<li><code>Notifier</code>订阅<code>Pub-Sub Topic</code>，并将<code>ProductExchange</code>按照<code>Client</code>请求的货币种类转换成<code>ProductLocal</code>对象，并以<code>SSE</code>事件的形式返回给<code>Client</code>.</li>
+</ol>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>接下来我们根据上面讨论的系统架构、项目模块以及业务逻辑来实现代码。</p>
+<h4 id="Core"><a href="#Core" class="headerlink" title="Core"></a>Core</h4><p>功能模块的公共部分都放置在<code>Core模块</code>内，我们可以在<a href="https://github.com/dipengfei/reactive-messaging-kt/blob/main/rmkt-core/src/main/kotlin/me/danielpf/rmkt/core/Core.kt" target="_blank" rel="noopener">Core.kt</a>文件里定义功能模块所需的domain、常量以及工具类。首先我们先使用<code>Kotlin</code>的特性之一，<a href="https://kotlinlang.org/docs/reference/data-classes.html" target="_blank" rel="noopener">数据类</a>来构建<code>Product</code>和<code>ProductExchange</code>，</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Product</span></span>(</span><br><span class="line">    <span class="keyword">val</span> id: String, </span><br><span class="line">    <span class="keyword">val</span> name: String, </span><br><span class="line">    <span class="keyword">val</span> price: <span class="built_in">Double</span>, </span><br><span class="line">    <span class="keyword">val</span> createdTime: LocalDateTime</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductExchange</span></span>(</span><br><span class="line">    <span class="keyword">val</span> product: Product, </span><br><span class="line">    <span class="keyword">val</span> localPrices: Map&lt;String, <span class="built_in">Double</span>&gt;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>然后再使用<a href="https://kotlinlang.org/docs/reference/enum-classes.html" target="_blank" rel="noopener">枚举类</a>构建<code>ExchangeRate</code>，</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="class"><span class="keyword">class</span> <span class="title">ExchangeRate</span></span>(<span class="keyword">val</span> rate: <span class="built_in">Double</span>) &#123;</span><br><span class="line">    USD(<span class="number">1.00</span>),</span><br><span class="line">    CNY(<span class="number">6.7906</span>),</span><br><span class="line">    JPY(<span class="number">105.3246</span>),</span><br><span class="line">    EUR(<span class="number">0.8535</span>),</span><br><span class="line">    GBP(<span class="number">0.773</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后我们再使用<a href="https://kotlinlang.org/docs/reference/object-declarations.html#companion-objects" target="_blank" rel="noopener">伴生对象</a>来模拟<code>Java</code>中的常量定义，</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Constants</span> </span>&#123;</span><br><span class="line">    <span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">val</span> PRODUCT_EXCHANGE_TOPIC = <span class="string">"topic:pe"</span></span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">val</span> DEFAULT_CURRENCY = <span class="string">"USD"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后我们再使用<a href="https://kotlinlang.org/docs/reference/object-declarations.html#object-declarations" target="_blank" rel="noopener">对象声明</a>来实现一个<code>单例模式</code>，这是一个单例的<code>ObjectMapper</code>，预定义了一些特性，可用于后续的JSON对象的序列化/反序列化，需要使用该对象的时候，只需要使用<code>ObjectMapperExtension.instance</code>即可。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">object</span> ObjectMapperExtension &#123;</span><br><span class="line">    <span class="keyword">val</span> instance: ObjectMapper = jacksonObjectMapper()</span><br><span class="line">        .registerModules(Jdk8Module(), JavaTimeModule())</span><br><span class="line">        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Producer"><a href="#Producer" class="headerlink" title="Producer"></a>Producer</h4><p>接下来我们将借助<a href="https://spring.io/projects/spring-cloud-stream" target="_blank" rel="noopener">Spring Cloud Stream</a>分别来实现<code>Producer</code>、<code>Processor</code>以及<code>Consumer</code>模块。最新版的<a href="https://spring.io/projects/spring-cloud-stream" target="_blank" rel="noopener">Spring Cloud Stream</a>彻底拥抱了<code>函数式</code>，使用<a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-stream/3.0.6.RELEASE/reference/html/spring-cloud-stream.html#Routing%20with%20functions" target="_blank" rel="noopener">Routing Function</a>替代了早期版本中的<code>@EnableBinding</code>、<code>@StreamEmitter</code>以及<code>@StreamListener</code>等注解，其对应关系为，</p>
+<table>
+<thead>
+<tr>
+<th align="left">Annotation</th>
+<th align="center">Routing Function</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Source, @StreamEmitter</td>
+<td align="center"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" target="_blank" rel="noopener">java.util.function.Supplier</a></td>
+</tr>
+<tr>
+<td align="left">Sink, @StreamListener</td>
+<td align="center"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Consumer.html" target="_blank" rel="noopener">java.util.function.Consumer</a></td>
+</tr>
+<tr>
+<td align="left">Processor, @EnableBinding(Processor.class)</td>
+<td align="center"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Function.html" target="_blank" rel="noopener">java.util.function.Function</a></td>
+</tr>
+</tbody></table>
+<p>对于<code>Producer</code>，我们只需注册一个类型为<code>Supplier</code>的<code>Bean</code>，而<code>Reactive</code>的<code>Producer</code>，只需要能够一个<code>Supplier&lt;Flux&lt;T&gt;&gt;</code>即可，代码如下，</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProducerApplication</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    runApplication&lt;ProducerApplication&gt;(*args)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SourceConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">productSource</span><span class="params">()</span></span>: Supplier&lt;Flux&lt;Product&gt;&gt; = Supplier &#123;</span><br><span class="line">        Flux.interval(Duration.ofSeconds(<span class="number">1</span>)).map &#123;</span><br><span class="line">            Product(</span><br><span class="line">                UUID.randomUUID().toString(),</span><br><span class="line">                RandomStringUtils.randomAlphanumeric(<span class="number">5</span>, <span class="number">10</span>),</span><br><span class="line">                Random.nextDouble(<span class="number">1000.00</span>),</span><br><span class="line">                LocalDateTime.now()</span><br><span class="line">            )</span><br><span class="line">        &#125;.onBackpressureDrop().log()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上代码会每秒钟产生一个ID为UUID，名字为5～10随机字母，价格为0～1000的随机商品。<br>数据由<code>Supplier</code>产生后，我们需要告知<code>Spring Cloud Stream</code>这些数据的<code>Destination</code>，这个<code>Destination</code>应该指向<code>RabbitMQ</code>中名为<code>products</code>的<code>Exchange</code>，我们只需要在<code>application.properties</code>加入下面配置即可，<code>Spring Cloud Stream</code>会自动创建这个<code>Exchange</code>，</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cloud.stream.bindings.productSource-out-0.destination</span>=<span class="string">products</span></span><br></pre></td></tr></table></figure>
+<p>这里的<a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-stream/3.0.6.RELEASE/reference/html/spring-cloud-stream.html#_bindings" target="_blank" rel="noopener">Binding</a>名称就是<code>Supplier</code>的Bean名称<code>productSource</code>。</p>
+<h4 id="Processor"><a href="#Processor" class="headerlink" title="Processor"></a>Processor</h4><p>接下来我们实现<code>Processor</code>，按照上一节的说明，<code>Processor</code>应该是一个<code>Function</code>，入参是<code>Flux&lt;Product&gt;</code>，出参是<code>Flux&lt;ProductExchange&gt;</code>，并完成<code>localPrices</code>的计算，详细代码如下，</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProcessorApplication</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    runApplication&lt;ProcessorApplication&gt;(*args)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProcessorConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">productProcessor</span><span class="params">()</span></span>: Function&lt;Flux&lt;Product&gt;, Flux&lt;ProductExchange&gt;&gt; = Function &#123;</span><br><span class="line">        it.log()</span><br><span class="line">            .map &#123; product -&gt;</span><br><span class="line">                ProductExchange(</span><br><span class="line">                    product,</span><br><span class="line">                    ExchangeRate.values()</span><br><span class="line">                        .map &#123; exchange -&gt; exchange.name to exchange.rate * product.price &#125;</span><br><span class="line">                        .toMap()</span><br><span class="line">                )</span><br><span class="line">            &#125;.log()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于<code>Processor</code>对应<code>Input</code>与<code>Output</code>两个<code>Binding</code>，所以配置中需要配置两个<code>destination</code>，<code>Input</code>来自于<code>products</code>，<code>Output</code>指向<code>product_exchanges</code>，</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cloud.stream.bindings.productProcessor-in-0.destination</span>=<span class="string">products</span></span><br><span class="line"><span class="meta">spring.cloud.stream.bindings.productProcessor-in-0.group</span>=<span class="string">product_processor</span></span><br><span class="line"></span><br><span class="line"><span class="meta">spring.cloud.stream.bindings.productProcessor-out-0.destination</span>=<span class="string">product_exchanges</span></span><br></pre></td></tr></table></figure>
+<p><code>Input</code>的<code>Binding</code>需要额外配置<code>group</code>的名称，这样可以有多个<code>Consumer</code>同时消费<code>Exchange</code>中的数据来提高并行处理能力。</p>
+<h4 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h4><p>接下来我们实现<code>Consumer</code>，按照最新的<code>Spring Cloud Stream</code>规范，<code>Consumer</code>应该对应一个<code>java.util.function.Consumer</code>实现。这里有一点需要注意，由于我们采用的是<code>Reactive</code>形式，而<code>Reactive</code>有自己的<code>Void</code>类型，而不是<code>Java</code>的<code>void</code>关键字，所以这里的<code>Consumer&lt;Flux&lt;T&gt;&gt;</code>应该使用<code>Function&lt;Flux&lt;?&gt;, Mono&lt;Void&gt;&gt;</code>代替，相反的，如果是非<code>Reactive</code>模式下，还是应该正常使用<code>java.util.function.Consumer</code>作为函数类型。</p>
+<p>另外，<code>Consumer</code>在过滤掉低价格的<code>ProductExchange</code>后，还需要将消息转发至<code>Redis</code>中的<code>Pub-Sub Topic</code>中，这里我们还需要配置一个<code>JSON</code>的序列化/反序列化器，这样Pub到<code>Redis</code>中的消息会以<code>JSON</code>数据格式表示，而不是默认的普通<code>String</code> ，这里的<code>ObjectMapper</code>将使用在<code>Core</code>模块里定义好的<code>ObjectMapperExtension</code>，</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConsumerApplication</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    runApplication&lt;ConsumerApplication&gt;(*args)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConsumerConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">productExchangeConsumer</span><span class="params">(operations: <span class="type">ReactiveRedisOperations</span>&lt;<span class="type">String</span>, ProductExchange&gt;)</span></span></span><br><span class="line">            : Function&lt;Flux&lt;ProductExchange&gt;, Mono&lt;<span class="built_in">Void</span>&gt;&gt; =</span><br><span class="line">        Function &#123;</span><br><span class="line">            it.filter &#123; pe -&gt; pe.product.price &gt; <span class="number">500.00</span> &#125;</span><br><span class="line">                .log()</span><br><span class="line">                .flatMap &#123; pe -&gt; operations.convertAndSend(PRODUCT_EXCHANGE_TOPIC, pe) &#125;</span><br><span class="line">                .then()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">productExchangeReactiveRedisOperations</span><span class="params">(factory: <span class="type">ReactiveRedisConnectionFactory</span>)</span></span></span><br><span class="line">            : ReactiveRedisOperations&lt;String, ProductExchange&gt; =</span><br><span class="line"></span><br><span class="line">        Jackson2JsonRedisSerializer(ProductExchange::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>).<span class="title">also</span> </span>&#123;</span><br><span class="line">            it.setObjectMapper(ObjectMapperExtension.instance)</span><br><span class="line">        &#125;.let &#123;</span><br><span class="line">            RedisSerializationContext.newSerializationContext&lt;String, ProductExchange&gt;(StringRedisSerializer())</span><br><span class="line">                .value(it).build()</span><br><span class="line">        &#125;.let &#123; ReactiveRedisTemplate&lt;String, ProductExchange&gt;(factory, it) &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码中，我们定义了两个<code>@Bean</code>，一个是作为<code>Consumer</code>用来处理数据的<code>Function</code>，另外一个就是用来发布消息的<code>ReactiveRedisTemplate</code>，并且配置了<code>JSON</code>的序列化/反序列化器。<br>当然，我们也需要配置一下<code>Consumer</code>的<code>destination</code>和<code>group</code>，</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cloud.stream.bindings.productExchangeConsumer-in-0.destination</span>=<span class="string">product_exchanges</span></span><br><span class="line"><span class="meta">spring.cloud.stream.bindings.productExchangeConsumer-in-0.group</span>=<span class="string">product_exchanges_consumer</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Notifier"><a href="#Notifier" class="headerlink" title="Notifier"></a>Notifier</h4><p>最后是<code>Notifier</code>。<code>Notifier</code>本身不需要<code>Spring Cloud Stream</code>的支持，只需要订阅<code>Redis</code>中的<code>Pub-Sub Topic</code>，与<code>Consumer</code>，用于监听<code>Redis</code>的<a href="https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/listener/ReactiveRedisMessageListenerContainer.html" target="_blank" rel="noopener">ReactiveRedisMessageListenerContainer</a>也需要自定义一个<code>JSON</code>的序列化/反序列化器，我们把这部分逻辑封装在<code>NotifyService</code>中。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NotifyService</span></span>(<span class="keyword">private</span> <span class="keyword">val</span> container: ReactiveRedisMessageListenerContainer) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> processor = ReplayProcessor.create&lt;ProductExchange&gt;()</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">init</span><span class="params">()</span></span> =</span><br><span class="line">        processor.sink().let &#123; sink -&gt;</span><br><span class="line">            container.receive(</span><br><span class="line">                listOf(ChannelTopic.of(PRODUCT_EXCHANGE_TOPIC)),</span><br><span class="line">                RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()),</span><br><span class="line">                RedisSerializationContext.SerializationPair.fromSerializer(</span><br><span class="line">                    Jackson2JsonRedisSerializer(ProductExchange::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>).<span class="title">also</span> </span>&#123;</span><br><span class="line">                        it.setObjectMapper(ObjectMapperExtension.instance)</span><br><span class="line">                    &#125;</span><br><span class="line">                )</span><br><span class="line">            )</span><br><span class="line">                .map &#123; m -&gt; m.message &#125;</span><br><span class="line">                .doOnNext &#123; sink.next(it) &#125;</span><br><span class="line">                .log()</span><br><span class="line">                .subscribe(&#123;&#125;, &#123;&#125;)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">notifyEvents</span><span class="params">(currency: <span class="type">String</span>)</span></span>: Flux&lt;ServerSentEvent&lt;ProductLocal&gt;&gt; =</span><br><span class="line">        processor.map &#123; p -&gt;</span><br><span class="line">            (<span class="keyword">if</span> (currency.toUpperCase() !<span class="keyword">in</span> p.localPrices.keys) DEFAULT_CURRENCY <span class="keyword">else</span> currency.toUpperCase())</span><br><span class="line">                .let &#123;</span><br><span class="line">                    ProductLocal(</span><br><span class="line">                        p.product.id,</span><br><span class="line">                        p.product.name,</span><br><span class="line">                        p.product.createdTime,</span><br><span class="line">                        BigDecimal(p.localPrices[it] ?: <span class="number">0.0</span>).setScale(<span class="number">4</span>, RoundingMode.HALF_EVEN),</span><br><span class="line">                        it</span><br><span class="line">                    )</span><br><span class="line">                &#125;.let &#123; ServerSentEvent.builder(it).id(it.id).build() &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductLocal</span></span>(</span><br><span class="line">    <span class="keyword">val</span> id: String,</span><br><span class="line">    <span class="keyword">val</span> name: String,</span><br><span class="line">    <span class="keyword">val</span> createdTime: LocalDateTime,</span><br><span class="line">    <span class="keyword">val</span> localPrice: BigDecimal,</span><br><span class="line">    <span class="keyword">val</span> localCurrency: String</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>上述代码比较容易理解，<code>init</code>方法用于在容器启动时，完成对<code>Pub-Sub Topic</code>的监听，同时将订阅的数据转发至一个<code>Reactor</code>的<code>Processor</code>中，这个<code>Processor</code>就是之后<code>SSE</code>事件的数据源。另外我们还提供一个<code>notifyEvents</code>方法，用于接收<code>currency</code>参数，将缓存在<code>Processor</code>中的数据加工成<code>ProductLocal</code>，并作为<code>SSE</code>发给客户端。</p>
+<p>接下来我们要向Spring容器注册这个service，以及API的Endpoint。与之前采用的<code>@Configuration</code>方式不同，这里我们尝试使用<a href="https://docs.spring.io/spring-integration/docs/current/reference/html/kotlin-dsl.html" target="_blank" rel="noopener">Spring Kotlin DSL</a>来注册Bean。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NotifierApplication</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    runApplication&lt;NotifierApplication&gt;(*args) &#123;</span><br><span class="line">        addInitializers(</span><br><span class="line">            beans &#123;</span><br><span class="line">                bean&lt;ReactiveRedisMessageListenerContainer&gt;()</span><br><span class="line">                bean&lt;NotifyService&gt;()</span><br><span class="line">                bean &#123;</span><br><span class="line">                    ref&lt;NotifyService&gt;().let &#123; notifyService -&gt;</span><br><span class="line">                        router &#123;</span><br><span class="line">                            GET(<span class="string">"/pl/&#123;currency&#125;"</span>) &#123;</span><br><span class="line">                                ServerResponse.ok().body(</span><br><span class="line">                                    BodyInserters.fromServerSentEvents(</span><br><span class="line">                                        notifyService.notifyEvents(</span><br><span class="line">                                            it.pathVariable(<span class="string">"currency"</span>)</span><br><span class="line">                                        )</span><br><span class="line">                                    )</span><br><span class="line">                                )</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码初看比较奇特，其中的<code>beans</code>、<code>bean</code>、<code>router</code>都属于基于<a href="https://kotlinlang.org/docs/reference/type-safe-builders.html" target="_blank" rel="noopener">Kotlin Type-Safe Builders</a>的<code>DSL</code>。这里我们不展开说明，只需要了解<code>Spring Kotlin DSL</code>提供了一种更为简单直接的配置方式。至此，所有模块都实现完毕。</p>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>下面我们开始运行代码。</p>
+<blockquote><p>在运行之前，保证本地已经运行了<code>RabbitMQ</code>和<code>Redis</code>。</p>
+<footer><strong>注意</strong></footer></blockquote>
+
+<p>首先是<code>Producer</code>，从console中我们可以看到<code>Product</code>数据源源不断产生并虽送到了MQ，</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">2020-10-05 14:32:38.518  INFO 5925 --- [oundedElastic-1] o.s.a.r.c.CachingConnectionFactory       : Created new connection: rabbitConnectionFactory.publisher#42e0654e:0/SimpleConnection@75a0a52e [delegate=amqp://guest@127.0.0.1:5672/, localPort= 52496]</span><br><span class="line">2020-10-05 14:32:39.273  INFO 5925 --- [     parallel-1] reactor.Flux.OnBackpressureDrop.1        : onNext(Product(id=6c2b236e-40f8-44ff-a1cf-7a94910944ac, name=cv9pATmM, price=395.31181210651545, createdTime=2020-10-05T14:32:39.272939))</span><br><span class="line">2020-10-05 14:32:40.272  INFO 5925 --- [     parallel-1] reactor.Flux.OnBackpressureDrop.1        : onNext(Product(id=8a10bf35-5e37-4e74-96da-7c8471e56937, name=8Qoagte, price=765.5943349019311, createdTime=2020-10-05T14:32:40.272813))</span><br><span class="line">2020-10-05 14:32:41.272  INFO 5925 --- [     parallel-1] reactor.Flux.OnBackpressureDrop.1        : onNext(Product(id=03751003-daa9-4f19-be69-5ac434b70b7f, name=FihxILXp9, price=351.88328720033377, createdTime=2020-10-05T14:32:41.272239))</span><br><span class="line">2020-10-05 14:32:42.268  INFO 5925 --- [     parallel-1] reactor.Flux.OnBackpressureDrop.1        : onNext(Product(id=d7788f46-009a-4a95-ae06-df88ca133d87, name=6DmSTJE, price=504.01347237601976, createdTime=2020-10-05T14:32:42.268429))</span><br><span class="line">2020-10-05 14:32:43.267  INFO 5925 --- [     parallel-1] reactor.Flux.OnBackpressureDrop.1        : onNext(Product(id=26a06bf0-91a7-4d2f-b15a-f666e072716b, name=J7G766jO0, price=597.8645160007096, createdTime=2020-10-05T14:32:43.267724))</span><br><span class="line">2020-10-05 14:32:44.268  INFO 5925 --- [     parallel-1] reactor.Flux.OnBackpressureDrop.1        : onNext(Product(id=9c0fd106-e00c-44b5-8187-2566737395bb, name=kyWUhn3J, price=152.01109964002336, createdTime=2020-10-05T14:32:44.268194))</span><br><span class="line">2020-10-05 14:32:45.268  INFO 5925 --- [     parallel-1] reactor.Flux.OnBackpressureDrop.1        : onNext(Product(id=110c91ae-41b2-4223-bf33-3759c4f4dc52, name=vlULf6xJ8, price=506.1068481643988, createdTime=2020-10-05T14:32:45.268531))</span><br><span class="line">2020-10-05 14:32:46.270  INFO 5925 --- [     parallel-1] reactor.Flux.OnBackpressureDrop.1        : onNext(Product(id=45c84ed6-7208-4e19-9ead-e9b778512a77, name=8kzXJ, price=15.856892691681669, createdTime=2020-10-05T14:32:46.270622))</span><br><span class="line">2020-10-05 14:32:47.270  INFO 5925 --- [     parallel-1] reactor.Flux.OnBackpressureDrop.1        : onNext(Product(id=569b85c0-7bdd-45ae-a83a-db237779d90f, name=pAZswdD, price=205.12230260372854, createdTime=2020-10-05T14:32:47.270448))</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>接下来是<code>Processor</code>，从console中我们可以看到<code>Product</code>被处理，<code>ProductExchange</code>数据不断产生，</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">2020-10-05 14:32:38.772  INFO 5898 --- [uct_processor-1] o.s.a.r.c.CachingConnectionFactory       : Attempting to connect to: [localhost:5672]</span><br><span class="line">2020-10-05 14:32:38.778  INFO 5898 --- [uct_processor-1] o.s.a.r.c.CachingConnectionFactory       : Created new connection: rabbitConnectionFactory.publisher#a62b940:0/SimpleConnection@c4b6d1e [delegate=amqp://guest@127.0.0.1:5672/, localPort= 52498]</span><br><span class="line">2020-10-05 14:32:39.276  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.1                       : onNext(Product(id=6c2b236e-40f8-44ff-a1cf-7a94910944ac, name=cv9pATmM, price=395.31181210651545, createdTime=2020-10-05T14:32:39.272939))</span><br><span class="line">2020-10-05 14:32:39.276  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.2                       : onNext(ProductExchange(product=Product(id=6c2b236e-40f8-44ff-a1cf-7a94910944ac, name=cv9pATmM, price=395.31181210651545, createdTime=2020-10-05T14:32:39.272939), localPrices=&#123;USD=395.31181210651545, CNY=2684.404391290504, JPY=41636.0584853939, EUR=337.39863163291096, GBP=305.57603075833646&#125;))</span><br><span class="line">2020-10-05 14:32:40.277  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.1                       : onNext(Product(id=8a10bf35-5e37-4e74-96da-7c8471e56937, name=8Qoagte, price=765.5943349019311, createdTime=2020-10-05T14:32:40.272813))</span><br><span class="line">2020-10-05 14:32:40.277  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.2                       : onNext(ProductExchange(product=Product(id=8a10bf35-5e37-4e74-96da-7c8471e56937, name=8Qoagte, price=765.5943349019311, createdTime=2020-10-05T14:32:40.272813), localPrices=&#123;USD=765.5943349019311, CNY=5198.844890585054, JPY=80635.91708581193, EUR=653.4347648387983, GBP=591.8044208791928&#125;))</span><br><span class="line">2020-10-05 14:32:41.276  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.1                       : onNext(Product(id=03751003-daa9-4f19-be69-5ac434b70b7f, name=FihxILXp9, price=351.88328720033377, createdTime=2020-10-05T14:32:41.272239))</span><br><span class="line">2020-10-05 14:32:41.276  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.2                       : onNext(ProductExchange(product=Product(id=03751003-daa9-4f19-be69-5ac434b70b7f, name=FihxILXp9, price=351.88328720033377, createdTime=2020-10-05T14:32:41.272239), localPrices=&#123;USD=351.88328720033377, CNY=2389.4986500625864, JPY=37061.966471060274, EUR=300.3323856254849, GBP=272.005781005858&#125;))</span><br><span class="line">2020-10-05 14:32:42.277  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.1                       : onNext(Product(id=d7788f46-009a-4a95-ae06-df88ca133d87, name=6DmSTJE, price=504.01347237601976, createdTime=2020-10-05T14:32:42.268429))</span><br><span class="line">2020-10-05 14:32:42.277  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.2                       : onNext(ProductExchange(product=Product(id=d7788f46-009a-4a95-ae06-df88ca133d87, name=6DmSTJE, price=504.01347237601976, createdTime=2020-10-05T14:32:42.268429), localPrices=&#123;USD=504.01347237601976, CNY=3422.5538855166, JPY=53085.01737261533, EUR=430.17549867293286, GBP=389.6024141466633&#125;))</span><br><span class="line">2020-10-05 14:32:43.270  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.1                       : onNext(Product(id=26a06bf0-91a7-4d2f-b15a-f666e072716b, name=J7G766jO0, price=597.8645160007096, createdTime=2020-10-05T14:32:43.267724))</span><br><span class="line">2020-10-05 14:32:43.270  INFO 5898 --- [uct_processor-1] reactor.Flux.Map.2                       : onNext(ProductExchange(product=Product(id=26a06bf0-91a7-4d2f-b15a-f666e072716b, name=J7G766jO0, price=597.8645160007096, createdTime=2020-10-05T14:32:43.267724), localPrices=&#123;USD=597.8645160007096, CNY=4059.858782354419, JPY=62969.84100196834, EUR=510.27736440660567, GBP=462.14927086854857&#125;))</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>然后是<code>Consumer</code>，我们可以直接通过<code>redis-cli</code>来订阅<code>Redis</code>的<code>Pub-Sub Topic</code>，</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; subscribe topic:pe</span><br><span class="line">Reading messages... (press Ctrl-C to quit)</span><br><span class="line">1) "subscribe"</span><br><span class="line">2) "topic:pe"</span><br><span class="line">3) (integer) 1</span><br><span class="line">1) "message"</span><br><span class="line">2) "topic:pe"</span><br><span class="line">3) "&#123;\"product\":&#123;\"id\":\"3e155fa7-9f42-4685-aeba-534342bc2f05\",\"name\":\"tvnzfHSJh\",\"price\":908.6521294566128,\"createdTime\":\"2020-10-05T14:36:03.278801\"&#125;,\"localPrices\":&#123;\"USD\":908.6521294566128,\"CNY\":6170.293150288076,\"JPY\":95703.42207416597,\"EUR\":775.5345924912191,\"GBP\":702.3880960699616&#125;&#125;"</span><br><span class="line">1) "message"</span><br><span class="line">2) "topic:pe"</span><br><span class="line">3) "&#123;\"product\":&#123;\"id\":\"563638ee-deef-4102-92f8-f8a95dbcea71\",\"name\":\"4n93HpIDy\",\"price\":730.6959805104445,\"createdTime\":\"2020-10-05T14:36:06.273764\"&#125;,\"localPrices\":&#123;\"USD\":730.6959805104445,\"CNY\":4961.864125254225,\"JPY\":76960.26186887037,\"EUR\":623.6490193656645,\"GBP\":564.8279929345737&#125;&#125;"</span><br><span class="line">1) "message"</span><br><span class="line">2) "topic:pe"</span><br><span class="line">3) "&#123;\"product\":&#123;\"id\":\"f578f6ef-2858-4f2c-8ddb-53aff31e7b60\",\"name\":\"tBJPIJg\",\"price\":997.1833424008273,\"createdTime\":\"2020-10-05T14:36:07.274668\"&#125;,\"localPrices\":&#123;\"USD\":997.1833424008273,\"CNY\":6771.473204907058,\"JPY\":105027.93666503018,\"EUR\":851.0959827391061,\"GBP\":770.8227236758395&#125;&#125;"</span><br><span class="line">1) "message"</span><br><span class="line">2) "topic:pe"</span><br><span class="line">3) "&#123;\"product\":&#123;\"id\":\"8825530f-4c92-4989-80a7-11344752eb95\",\"name\":\"ffAND\",\"price\":656.5872951974707,\"createdTime\":\"2020-10-05T14:36:08.278398\"&#125;,\"localPrices\":&#123;\"USD\":656.5872951974707,\"CNY\":4458.621686767945,\"JPY\":69154.79423175553,\"EUR\":560.3972564510412,\"GBP\":507.5419791876448&#125;&#125;"</span><br><span class="line">1) "message"</span><br><span class="line">2) "topic:pe"</span><br><span class="line">3) "&#123;\"product\":&#123;\"id\":\"bed9f33f-2c00-4e6f-a73a-27c2d4472a25\",\"name\":\"t1eCrzm\",\"price\":569.2236131405484,\"createdTime\":\"2020-10-05T14:36:09.276028\"&#125;,\"localPrices\":&#123;\"USD\":569.2236131405484,\"CNY\":3865.3698673922086,\"JPY\":59953.24936458301,\"EUR\":485.8323538154581,\"GBP\":440.00985295764394&#125;&#125;"</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>最后是<code>Notifier</code>，我们可以直接使用<code>curl</code>命令来调用API，</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8080/pl/jpy</span><br><span class="line">id:8a10bf35-5e37-4e74-96da-7c8471e56937</span><br><span class="line">data:&#123;"id":"8a10bf35-5e37-4e74-96da-7c8471e56937","name":"8Qoagte","createdTime":"2020-10-05T14:32:40.272813","localPrice":80635.9171,"localCurrency":"JPY"&#125;</span><br><span class="line"></span><br><span class="line">id:d7788f46-009a-4a95-ae06-df88ca133d87</span><br><span class="line">data:&#123;"id":"d7788f46-009a-4a95-ae06-df88ca133d87","name":"6DmSTJE","createdTime":"2020-10-05T14:32:42.268429","localPrice":53085.0174,"localCurrency":"JPY"&#125;</span><br><span class="line"></span><br><span class="line">id:26a06bf0-91a7-4d2f-b15a-f666e072716b</span><br><span class="line">data:&#123;"id":"26a06bf0-91a7-4d2f-b15a-f666e072716b","name":"J7G766jO0","createdTime":"2020-10-05T14:32:43.267724","localPrice":62969.8410,"localCurrency":"JPY"&#125;</span><br><span class="line"></span><br><span class="line">id:110c91ae-41b2-4223-bf33-3759c4f4dc52</span><br><span class="line">data:&#123;"id":"110c91ae-41b2-4223-bf33-3759c4f4dc52","name":"vlULf6xJ8","createdTime":"2020-10-05T14:32:45.268531","localPrice":53305.5013,"localCurrency":"JPY"&#125;</span><br><span class="line"></span><br><span class="line">id:fb014f7e-3709-4223-85a2-6b4b6b6927b3</span><br><span class="line">data:&#123;"id":"fb014f7e-3709-4223-85a2-6b4b6b6927b3","name":"LpoMwa","createdTime":"2020-10-05T14:32:48.271629","localPrice":75403.9377,"localCurrency":"JPY"&#125;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本文只是做了一个<code>Spring</code> + <code>Kotlin</code>的初步整合应用，并少量涉及了<code>Spring</code>针对<code>Kotlin</code>所做的一些定制和优化。从这些简单的示例中，我们仍然能够感受到<code>Kotlin</code>语言的强大表现力和独特的魅力。即使不去使用<code>DSL</code>等稍微高级的特性，<code>Kotlin</code>仍然表现的足够简洁与高效。<code>Spring</code>与<code>Kotlin</code>的初次相见就已擦出火花，相信在未来，<code>Spring</code>与<code>Kotlin</code>还会迸射出更加绮丽的色彩。</p>
+<p>本文的源代码已放置在<a href="https://github.com/dipengfei/reactive-messaging-kt" target="_blank" rel="noopener">Github</a>，欢迎大家一起讨论。谢谢！</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-10-05T07:02:52.699Z" itemprop="dateUpdated">2020-10-05 15:02:52</time>
+</span><br>
+
+
+        
+        引用请注明文章出处：<a href="/2020/10/05/reactive-messaging-kt/" target="_blank" rel="external">https://danielpf.me/2020/10/05/reactive-messaging-kt/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://danielpf.me">
+            <img src="/img/avatar-yumao.jpg" alt="鹏飞Daniel">
+            鹏飞Daniel
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reactive/" rel="tag">reactive</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2020/10/05/reactive-messaging-kt/&title=《Kotlin + Spring Cloud Stream构建实时消息系统》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2020/10/05/reactive-messaging-kt/&title=《Kotlin + Spring Cloud Stream构建实时消息系统》 — 鹏飞Daniel的技术足迹&source=作为一门新兴的现代化编程语言，Kotlin正获得广泛的关注，Spring社区也将支持Kotlin语言作为下一阶段的重要工作，甚至抛出了Spring Lov..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2020/10/05/reactive-messaging-kt/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Kotlin + Spring Cloud Stream构建实时消息系统》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2020/10/05/reactive-messaging-kt/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2020/10/05/reactive-messaging-kt/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2021/04/19/you-dont-know-springboot-01/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">你不知道的SpringBoot (Part 1)</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2020/08/29/spring-bean-lite-mode/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">小论Spring中@Bean的Lite Mode</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "ymjtakuY1KwMihG6FxtgO1K7-gzGzoHsz",
+            appKey: "iL3xdrITiNRcnSNxLGoFYs4j",
+            avatar: "mm",
+            placeholder: "来啊，造作啊!",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        授人玫瑰，手有余香~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechatpay.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechatpay.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>鹏飞Daniel &copy; 2020 - 2021</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2020/10/05/reactive-messaging-kt/&title=《Kotlin + Spring Cloud Stream构建实时消息系统》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2020/10/05/reactive-messaging-kt/&title=《Kotlin + Spring Cloud Stream构建实时消息系统》 — 鹏飞Daniel的技术足迹&source=作为一门新兴的现代化编程语言，Kotlin正获得广泛的关注，Spring社区也将支持Kotlin语言作为下一阶段的重要工作，甚至抛出了Spring Lov..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2020/10/05/reactive-messaging-kt/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Kotlin + Spring Cloud Stream构建实时消息系统》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2020/10/05/reactive-messaging-kt/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2020/10/05/reactive-messaging-kt/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJklEQVR42u3aSW7DMAwF0Nz/0i7QVYHAzidpF4j0tAqcwXpeMOLwesXr+F3vV/5ef399/W7yrZsXBgbG1zKOy3V94zNq/jtnDyjfGwYGxj6MfFsJLNn6XY8MAwMD4/ozyWGxF4gxMDAw7g2411tM7oKBgYGRMJLjWhIuq4E4T3Rvy8UxMDC+kFFtDPzn6wf7GxgYGF/COIpr0oA8HlsYGBhrM5KyfjJyMU9HkyPph3CMgYGxKCNJDicjFBNS4UFjYGAszZgU4nshclQsy/83MDAwFmL0xiMmzci86F8I6BgYGBswesWyavMgP/CV74KBgbE0YzIqcdcBsfddDAyMfRh5Sjk5wOVNhd6BEgMDY21Gdeaql3zmgGqrAAMDYx9GHsKqhbZqcKyOfWBgYOzASMYsqjlxPq7Ra1h+aGFiYGAszZhMLySF/vwzZRIGBsZmjPlW8iCepLLRcRMDA2MzRp46JtutHjHzB1f438DAwPhyxmScqxdk85BaDtAYGBiLMqo3nrQnm0MSSaKLgYGxASMJbXlrM996NTE+vY6BgbE0ozds0WsSJIfLalMTAwNjB8ZRXJPjY6/cFoVpDAyMpRnVNLLXbpwMfkUtTAwMjA0YSZC9qwuRXyk/bwwMjA0Yk3p7oYg/WB8eAQYGBsbDqWn1lz/MjGBgYGAMCvoJOwnip0ksBgbG0owkic2bl73AOkpuMTAwlmY8V8uqhtdJyQ8DA2NRxg+D48dlxR+YQAAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+
+    <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+    <script>
+      if (window.mermaid) {
+        mermaid.initialize({theme: 'forest'});
+      }
+    </script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

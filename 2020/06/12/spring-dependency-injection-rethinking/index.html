@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>再论Spring依赖注入 | 鹏飞Daniel的技术足迹 | 尔曹身与名俱灭,不废江河万古流</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="spring">
+    <meta name="description" content="依赖注入(Dependency Injection)是Spring Framework最核心的概念之一，通常来说，依赖注入主要分成构造注入(Constructor-based Dependency Injection)与setter注入(Setter-based Dependency Injection)两种类型，本文会结合Spring Framkework的发展以及项目中的具体应用，在封装性(E">
+<meta property="og:type" content="article">
+<meta property="og:title" content="再论Spring依赖注入">
+<meta property="og:url" content="https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/index.html">
+<meta property="og:site_name" content="鹏飞Daniel的技术足迹">
+<meta property="og:description" content="依赖注入(Dependency Injection)是Spring Framework最核心的概念之一，通常来说，依赖注入主要分成构造注入(Constructor-based Dependency Injection)与setter注入(Setter-based Dependency Injection)两种类型，本文会结合Spring Framkework的发展以及项目中的具体应用，在封装性(E">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-12T13:11:31.000Z">
+<meta property="article:modified_time" content="2020-06-13T05:48:29.000Z">
+<meta property="article:author" content="鹏飞Daniel">
+<meta property="article:tag" content="spring">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="鹏飞Daniel的技术足迹" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar-yumao.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">鹏飞Daniel</h5>
+          <a href="mailto:dipengfei1982@gmail.com" title="dipengfei1982@gmail.com" class="mail">dipengfei1982@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/dipengfei" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://www.linkedin.com/in/daniel-pf" target="_blank" >
+                <i class="icon icon-lg icon-linkedin"></i>
+                Linkedin
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">再论Spring依赖注入</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">再论Spring依赖注入</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2020-06-12T13:11:31.000Z" itemprop="datePublished" class="page-time">
+  2020-06-12
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#细说分类"><span class="post-toc-number">1.</span> <span class="post-toc-text">细说分类</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#特殊依赖"><span class="post-toc-number">2.</span> <span class="post-toc-text">特殊依赖</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#对比"><span class="post-toc-number">3.</span> <span class="post-toc-text">对比</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#结论"><span class="post-toc-number">4.</span> <span class="post-toc-text">结论</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-spring-dependency-injection-rethinking"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">再论Spring依赖注入</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2020-06-12 21:11:31" datetime="2020-06-12T13:11:31.000Z"  itemprop="datePublished">2020-06-12</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p><code>依赖注入(Dependency Injection)</code>是<a href="https://spring.io/projects/spring-framework" target="_blank" rel="noopener">Spring Framework</a>最核心的概念之一，通常来说，<code>依赖注入</code>主要分成<code>构造注入(Constructor-based Dependency Injection)</code>与<code>setter注入(Setter-based Dependency Injection)</code>两种类型，本文会结合<code>Spring Framkework</code>的发展以及项目中的具体应用，在<code>封装性(Encapsulation)</code>、<code>不可变性(Immutability)</code>、<code>安全性(Security)</code>以及<code>循环依赖性(Circular Dependencies)</code>等方面来重新探讨这两种依赖注入方式，进而总结出在“新时代”的背景下，如何适当地选择。</p>
+<a id="more"></a>
+
+<blockquote><p>谨以此文献给在code review中备受打击的小G同学。。。</p>
+<footer><strong>篇首语</strong></footer></blockquote>
+
+
+<h3 id="细说分类"><a href="#细说分类" class="headerlink" title="细说分类"></a>细说分类</h3><p>首先说<code>setter注入</code>，这是最常见也是最老牌的一种依赖注入方式，套用<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-setter-injection" target="_blank" rel="noopener">Spring官方文档</a>的例子，这种注入方式的特点是先<code>创建实例</code>，再<code>反射调用setter方法</code>注入依赖，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleMovieLister</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// the SimpleMovieLister has a dependency on the MovieFinder</span></span><br><span class="line">    <span class="keyword">private</span> MovieFinder movieFinder;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// a setter method so that the Spring container can inject a MovieFinder</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMovieFinder</span><span class="params">(MovieFinder movieFinder)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.movieFinder = movieFinder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// business logic that actually uses the injected MovieFinder is omitted...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而在<code>@Autowired</code>注解的帮助下，<code>setter注入</code>也衍生出了最简化的形式，以上代码直接可以写作下面的形式，我们姑且叫它<code>私有变量注入</code>，这种注入方式的特点是，先<code>创建实例</code>，再<code>反射修改私有变量</code>注入依赖，时至今日，相信很多coder还是非常乐于使用这种依赖注入方式，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleMovieLister</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MovieFinder movieFinder;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来再说<code>构造注入</code>，这种注入方式更加直接，其特点是,<code>创建实例</code>与<code>注入依赖</code>同时进行，都是通过<code>反射调用构造方法</code>完成，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleMovieLister</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// the SimpleMovieLister has a dependency on a MovieFinder</span></span><br><span class="line">    <span class="keyword">private</span> MovieFinder movieFinder;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// a constructor so that the Spring container can inject a MovieFinder</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SimpleMovieLister</span><span class="params">(MovieFinder movieFinder)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.movieFinder = movieFinder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// business logic that actually uses the injected MovieFinder is omitted...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里再介绍一种进阶版，采用<code>lombok</code> + <code>private finaal</code>的构造注入才是最常见的写法，我们接下来讨论的<code>构造注入</code>，如不特殊说明，都是指的这种方式，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleMovieLister</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// the SimpleMovieLister has a dependency on a MovieFinder</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> MovieFinder movieFinder;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// lombok will help generate this method during compiling time</span></span><br><span class="line">    <span class="comment">//public SimpleMovieLister(MovieFinder movieFinder) &#123;</span></span><br><span class="line">        <span class="comment">//this.movieFinder = movieFinder;</span></span><br><span class="line">    <span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// business logic that actually uses the injected MovieFinder is omitted...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>随着<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java" target="_blank" rel="noopener">Java-based Container Configuration</a>越来越流行，<code>构造注入</code>也有了广义上的版本，我们姑且叫它<code>方法参数注入</code>，与普通<code>构造注入</code>不同的是，依赖是作为<code>反射调用bean创建方法</code>的<code>参数(args)</code>注入，而对象实例化过程，是由在方法内部编程实现，而bean的依赖可能是<code>构造注入</code>，也可能是<code>setter注入</code>，看下面的例子，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MovieListerConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SimpleMovieLister <span class="title">simpleMovieLister</span><span class="params">(MovieFinder movieFinder)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// implemented as constructor-based injection</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SimpleMovieLister(movieFinder);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// it can be also implemented as setter-based injection</span></span><br><span class="line">        <span class="comment">// SimpleMovieLister lister = new SimpleMovieLister();</span></span><br><span class="line">        <span class="comment">// lister.setMovieFinder(movieFinder);</span></span><br><span class="line">        <span class="comment">// return lister;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="特殊依赖"><a href="#特殊依赖" class="headerlink" title="特殊依赖"></a>特殊依赖</h3><p>这里还需要举例说明两种特殊的依赖。</p>
+<p>第一种很常见，其依赖不是其他的bean，而是一个外部的值，还以上面的代码为例，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleMovieLister</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MovieFinder movieFinder;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;app.movie_lister.max_size:100&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> Integer maxSize;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>另外一种比较特殊，但有可能在不知不觉中还是接触到了，这个就是<code>循环依赖</code>，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceA</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ServiceB serviceB;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceB</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ServiceA serviceA;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个列子只是最简单的<code>循环依赖</code>，还有更复杂一些的情况，例如ServiceA -&gt; ServiceB -&gt; ServiceC -&gt; ServiceA，这里不再赘述。</p>
+<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><p>我们用一个表格来对比这些注入方式，</p>
+<table>
+<thead>
+<tr>
+<th align="left">对比项</th>
+<th align="center">setter注入</th>
+<th align="center">私有变量注入</th>
+<th align="center">构造注入(private final)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">保证封装性？</td>
+<td align="center"><strong>Yes</strong></td>
+<td align="center"><em>No</em></td>
+<td align="center"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td align="left">保证不可变性？</td>
+<td align="center"><em>No</em></td>
+<td align="center"><em>No</em></td>
+<td align="center"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td align="left">保证安全性？</td>
+<td align="center"><em>No</em></td>
+<td align="center"><em>No</em></td>
+<td align="center"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td align="left">允许循环依赖？</td>
+<td align="center"><strong>Yes</strong></td>
+<td align="center"><strong>Yes</strong></td>
+<td align="center"><em>No</em></td>
+</tr>
+</tbody></table>
+<p>下面详细解释一下表格内容。</p>
+<p><a href="https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)" target="_blank" rel="noopener">封装性(Encapsulation)</a>是OOP的三大特性之一，这里我们不做展开说明，而<code>setter注入</code>与<code>构造注入</code>为何没有破坏封装性，也非常容易理解，那就是Spring是通过<code>反射私有变量访问器(setter方法或构造方法)</code>来完成依赖注入的，完全遵守了封装性的准则。那么问题来了，为什么<code>私有变量注入</code>破坏了封装性？</p>
+<blockquote><p><code>私有变量注入</code>本质上是通过<code>反射修改私有(private)</code>变量值来完成依赖注入的，完全没有通过<code>私有变量访问器</code>，换句话说，一个<code>私有</code>的变量平白无故地就被修改了值。</p>
+<footer><strong>为什么“私有变量注入”破坏了封装性？</strong></footer></blockquote>
+
+<p>乍一看，即使封装性被破坏，也没有什么大不了的，从结果上看，未经<code>私有变量访问器</code>修改的值也是符合预期的，但事实上一旦封装性被破坏，<code>不可变性(Immutability)</code>亦不能保证。<a href="https://en.wikipedia.org/wiki/Immutable_object" target="_blank" rel="noopener">不可变性(Immutability)</a>也是软件OOP里一个非常重要设计理念，这里我们仍不做展开。但依照上面的表格所示，即使封装性可以保证，仍不能保证一个对象的不可变性。</p>
+<p>啰嗦了这么多，无论<code>封装性</code>也好，<code>不可变性</code>也罢，其实都是为了保重代码在处理<code>依赖注入</code>时的<code>安全性(Security)</code>。这里的<code>安全性(Security)</code>是一个相对狭义的概念，其含义可以概括为一点，<strong>不可变的依赖，才可能是无害的依赖</strong>。说起来可能很抽象，下面用两个逆向场景具体说明，</p>
+<blockquote><p><code>setter</code>作为访问器，在开放给Spring的同时，也开发给了其他代码。无论善意或恶意，只需要重新调用一下setXXX方法，哪怕传入一个<code>null</code>值，其影响也足够致命。</p>
+<footer><strong>为什么“setter注入”不安全？</strong></footer></blockquote>
+
+<blockquote><p>与<code>setter注入</code>类似，虽然<code>私有变量注入</code>并没有提供一个<code>setter</code>作为访问器，但通过<code>反射</code>，仍然可以直接修改私有变量的值，在运行时改变依赖。</p>
+<footer><strong>为什么“私有变量注入”不安全？</strong></footer></blockquote>
+
+<p>以上两个场景概括起来，就是在说明，存在这样或那样的可能性，在<code>运行时(runtime)</code>阶段，依赖是有可能被有意或无意修改，从而导致程序的行为不正确，甚至产生灾难性后果。基于以上分析，也很容易推导出保证运行时安全性的手段，那就是<code>构造注入且私有变量为final</code>,</p>
+<blockquote><p>简而言之，Java语言在<code>语义(semantic)</code>上保证<code>final</code>是不可修改的，所以不会在<code>运行时(runtime)</code>被修改，即使通过<code>反射</code>亦不可能。</p>
+<footer><strong>为什么“private final”安全？</strong></footer></blockquote>
+
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>技术本无对错，只看是否适用于不同的场景，而不同的技术，在不同的历史时期和时代背景下，会进化、发展、演变出不同的方式、流派、体系，Spring Framework亦是如此。</p>
+<p>在Spring 2.5.x时代，<code>依赖注入</code>与<code>控制反转</code>方兴未艾，广大Java EE的开发人员，还在被EJB折腾的七窍生烟之时，Spring所倡导的这些理念，让从业者有久旱逢甘霖之快感，而受限于当时的技术理念与潮流，仍使用XML作为bean相互依赖的组织媒介，使用<code>setter注入</code>便是“多快好省”的不二法门。</p>
+<p>随着时间的推移，人们对<code>依赖注入</code>、<code>控制反转</code>理解和实践的逐渐深入，Spring 3.x也呼之欲出。开发者也越发体会到，bean与bean之间的依赖关系，在绝大多数场景下是<code>内联</code>的，是<code>自然</code>的，甚至是<code>与生俱来</code>的，无论你是否用XML等配置方式去描述它，这些bean之间的依赖关系，都在那里，且相对稳定，几乎不会被修改。于是，在这个理念的指导下，才有了bean的<code>自动装配(Autowired)</code>，才有了后来<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-annotation-config" target="_blank" rel="noopener">Annotation-based Container Configuration</a>，曾经漫山遍野的XML也淹没于扑面而来的<code>@Autowired</code>注解之中，而<code>私有变量注入</code>注入更是让人高潮迭起，如痴如醉，被传统Java EE思想钳制多年的思想也随之解放，以少量的XML加以大量的<code>私有变量注入</code>也蔚然成风，仿佛构造方法和setter都成了明日黄花，不合时宜。</p>
+<p>一个好的技术框架，其生命力往往取决于设计者的思想境界。当劳苦大众们在为使用<code>私有变量注入</code>大幅提高生产力而弹冠相庆时，Spring团队却没有停下审视和思考的脚步。于是更加极至的<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java" target="_blank" rel="noopener">Java-based Container Configuration</a>也随之诞生，并在Spring 5.x后受到Spring官方推崇。有人说<code>Java-based Container</code>是历史的倒退，是Java EE糟粕的复辟，现在看来，不得不佩服Spring设计者独到的眼光和正派的价值观，其终极目标，仍然是以<code>不可变性</code>与<code>安全性</code>在程序设计领域重要的作用为导向的，尤其在以<code>线程模型</code>为程序基本运行模型的JVM语言里更是如此，所以依赖注入方式在经过无数的<code>私有变量注入</code>滥用，在肯定<code>bean之间的自然依赖关系</code>的条件下，回归到了<code>private final变量 + 构造注入</code>的方式，继而出现了使用lombok来简化唯一构造方法的终极写法。</p>
+<p>拥抱变化，拥抱发展，这才是Spring Framework经久不衰的主要原因。而作为终端用户的我们，除了与时俱进，更要尊重技术发展的潮流，既不能用旧时代的想法和思路来处理新时代问题，也不能用新时代的视角和手段来否定旧时代技术，唯有如此，才是技术人员应有的素质和觉悟。</p>
+<p>让我们回归本篇文章的讨论，在新时代的背景下，如何选择依赖注入方式呢？归纳起来，也就是下面几点，</p>
+<ol>
+<li>优先采用<code>private final变量 + 构造注入</code>来注入依赖；</li>
+<li>在没有其他<code>值(依赖)</code>需要注入时，可以考虑用lombok的<code>@RequiredArgsConstructor</code>来简化代码；</li>
+<li>原则上应避免<code>循环依赖</code>，如果实在无法避免，可以适度使用<code>setter注入</code>，但仍应该避免使用<code>私有变量注入</code>；</li>
+<li>在Unit Test等场景下，仍然可以使用<code>私有变量注入</code>来简化代码。</li>
+</ol>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-06-13T05:48:29.000Z" itemprop="dateUpdated">2020-06-13 13:48:29</time>
+</span><br>
+
+
+        
+        引用请注明文章出处：<a href="/2020/06/12/spring-dependency-injection-rethinking/" target="_blank" rel="external">https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://danielpf.me">
+            <img src="/img/avatar-yumao.jpg" alt="鹏飞Daniel">
+            鹏飞Daniel
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/&title=《再论Spring依赖注入》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/&title=《再论Spring依赖注入》 — 鹏飞Daniel的技术足迹&source=依赖注入(Dependency Injection)是Spring Framework最核心的概念之一，通常来说，依赖注入主要分成构造注入(Constru..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《再论Spring依赖注入》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2020/08/29/spring-bean-lite-mode/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">小论Spring中@Bean的Lite Mode</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2020/05/03/n-ways-of-writing-word-hui/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">茴字的N种写法</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "ymjtakuY1KwMihG6FxtgO1K7-gzGzoHsz",
+            appKey: "iL3xdrITiNRcnSNxLGoFYs4j",
+            avatar: "mm",
+            placeholder: "来啊，造作啊!",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        授人玫瑰，手有余香~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechatpay.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechatpay.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>鹏飞Daniel &copy; 2020 - 2021</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/&title=《再论Spring依赖注入》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/&title=《再论Spring依赖注入》 — 鹏飞Daniel的技术足迹&source=依赖注入(Dependency Injection)是Spring Framework最核心的概念之一，通常来说，依赖注入主要分成构造注入(Constru..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《再论Spring依赖注入》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2020/06/12/spring-dependency-injection-rethinking/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtUlEQVR42u3aQVLDMBAEwPz/03CFCjYzKymEqvYphR1J7UO0zOrxiK+PL9fz358/P3/r/sqff5y48PDw8BaWnkycjJbczcdvXwQeHh7ea3j5Uq4muF9Ku8Ek40QvFw8PD+9teMnQCTvZDO6peHh4eP+Fd79VtOV1Xkbj4eHhvQ+v/SFuv9U++QdZCx4eHt6BLtL7fD7S38PDw8Nb7qrf/+C2Las8klg5gvBtNDw8PLwDvDaizcFt+dsGE8WTeHh4eId5s6MAbdQ7C4uTF/fDOHh4eHjHeOtN/bwplSyxDUcuv4uHh4e3lZc349uwIF96O1ryuvHw8PBO8/KJ20XMDgS0B8KaZAIPDw9vJy9vKbWNsbbln8wbFfd4eHh4B3hRYRr83M+oswB3uFXg4eHhbeIlYeissJ7FCu2BrTprwcPDw1vmtceq2pA3v5uHyHkAjYeHh/ca3q7W/q7Yt/1LUV7j4eHhjXh7F51sGLNgom2PRf09PDw8vBEvKabb1v6uIjuH1a0vPDw8vAXeyiJmC8pnmYXLP5yMwMPDw9vKmzWx8sNP6+V4Pssv2wMeHh7eVt4sgCjigE1hRL6qpQsPDw8vaHrlm8Fe8K4RLleLh4eHd4D3mphgFt22Me7l83h4eHgHeAkyiSTW210HD7/i4eHhbeXNDj/l4BaWbwNRaIuHh4d3jJc0lmZL2RVnDKMTPDw8vGO8dsr719FuLeuttfo2Hh4e3oj3UV75gYBZBNxuAL/cxcPDwzvA29aeL1tfswNYew9p4eHh4a3wks1gVl6vxBkrIQgeHh7ea3htYyzZbZLyen3v2py14OHh4R2OcVeK8vwl5rNfnibDw8PD+1NeG9S2BfcsVThYUuPh4eEthBHtQatZBDyLbi+ReHh4eAd47T/8eeM/Z+cl9RIDDw8Pb5X3CROBnHHRaH34AAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+
+    <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+    <script>
+      if (window.mermaid) {
+        mermaid.initialize({theme: 'forest'});
+      }
+    </script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

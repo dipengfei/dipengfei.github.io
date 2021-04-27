@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>你不知道的SpringBoot (Part 1) | 鹏飞Daniel的技术足迹 | 尔曹身与名俱灭,不废江河万古流</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="spring,springboot">
+    <meta name="description" content="随着SpringBoot日渐流行，有关SpringBoot的各类“心经”、“秘籍”、“从入门到精通”之类的文章或者书籍琳琅满目、层出不穷，本文无意与这些典籍争锋，而是从实际应用出发，结合官方文档，收集并整理一些不常见却很有用的知识点，同时蹭一下You Don’t Know JS Yet的热度，姑且就叫它你不知道的SpringBoot。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="你不知道的SpringBoot (Part 1)">
+<meta property="og:url" content="https://danielpf.me/2021/04/19/you-dont-know-springboot-01/index.html">
+<meta property="og:site_name" content="鹏飞Daniel的技术足迹">
+<meta property="og:description" content="随着SpringBoot日渐流行，有关SpringBoot的各类“心经”、“秘籍”、“从入门到精通”之类的文章或者书籍琳琅满目、层出不穷，本文无意与这些典籍争锋，而是从实际应用出发，结合官方文档，收集并整理一些不常见却很有用的知识点，同时蹭一下You Don’t Know JS Yet的热度，姑且就叫它你不知道的SpringBoot。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-19T13:00:30.000Z">
+<meta property="article:modified_time" content="2021-04-22T14:41:27.978Z">
+<meta property="article:author" content="鹏飞Daniel">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="springboot">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="鹏飞Daniel的技术足迹" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar-yumao.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">鹏飞Daniel</h5>
+          <a href="mailto:dipengfei1982@gmail.com" title="dipengfei1982@gmail.com" class="mail">dipengfei1982@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/dipengfei" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://www.linkedin.com/in/daniel-pf" target="_blank" >
+                <i class="icon icon-lg icon-linkedin"></i>
+                Linkedin
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">你不知道的SpringBoot (Part 1)</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">你不知道的SpringBoot (Part 1)</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2021-04-19T13:00:30.000Z" itemprop="datePublished" class="page-time">
+  2021-04-19
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%8A%80%E5%B7%A7/">技巧</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#创建项目"><span class="post-toc-number">1.</span> <span class="post-toc-text">创建项目</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#内置的构建工具"><span class="post-toc-number">2.</span> <span class="post-toc-text">内置的构建工具</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#特有的转换器"><span class="post-toc-number">3.</span> <span class="post-toc-text">特有的转换器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#特有的事件"><span class="post-toc-number">4.</span> <span class="post-toc-text">特有的事件</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#运行初始化代码"><span class="post-toc-number">5.</span> <span class="post-toc-text">运行初始化代码</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Web-Application类型"><span class="post-toc-number">6.</span> <span class="post-toc-text">Web Application类型</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用JSON配置应用"><span class="post-toc-number">7.</span> <span class="post-toc-text">使用JSON配置应用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#基于Profile的Logback"><span class="post-toc-number">8.</span> <span class="post-toc-text">基于Profile的Logback</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#探活"><span class="post-toc-number">9.</span> <span class="post-toc-text">探活</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#多数据源"><span class="post-toc-number">10.</span> <span class="post-toc-text">多数据源</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-you-dont-know-springboot-01"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">你不知道的SpringBoot (Part 1)</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2021-04-19 21:00:30" datetime="2021-04-19T13:00:30.000Z"  itemprop="datePublished">2021-04-19</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%8A%80%E5%B7%A7/">技巧</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>随着<a href="https://spring.io/projects/spring-boot" target="_blank" rel="noopener">SpringBoot</a>日渐流行，有关<code>SpringBoot</code>的各类“心经”、“秘籍”、“从入门到精通”之类的文章或者书籍琳琅满目、层出不穷，本文无意与这些典籍争锋，而是从实际应用出发，结合<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/" target="_blank" rel="noopener">官方文档</a>，收集并整理一些不常见却很有用的知识点，同时蹭一下<a href="https://github.com/getify/You-Dont-Know-JS" target="_blank" rel="noopener">You Don’t Know JS Yet</a>的热度，姑且就叫它<code>你不知道的SpringBoot</code>。</p>
+<a id="more"></a>
+
+<h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><p><a href="https://start.spring.io/" target="_blank" rel="noopener">start.spring.io</a>可以说是最好的<code>SpringBoot</code>项目创建工具，没有之一。<code>start.spring.io</code>可以满足绝大多数创建由<code>SpringBoot</code>驱动的应用程序的场景，它具备以下特征：</p>
+<ol>
+<li>生成的工程开箱即用，几乎不做任何修改就可以运行；</li>
+<li>IDE友好，可以快速导入进主流IDE中；</li>
+<li>依赖版本准确，不会引发依赖不匹配而导致的各类诡异问题，例如<code>SpringBoot</code>与<code>Spring Cloud</code>大版本的匹配都是准确的；</li>
+<li>多构建工具支持，可以自由选择<code>Maven</code>或<code>Gradle</code>；</li>
+<li>多语言支持，可以自由选择<code>Java</code>、<code>Groovy</code>或<code>Kotlin</code>；</li>
+<li>多Java版本支持，可以自由选择<code>LTS</code>或最新版的JDK；</li>
+<li>可以通过<code>Explore</code>功能拷贝需要的依赖代码片段而不需要下载整个项目；</li>
+<li>可以通过<code>Share</code>功能把创建项目的属性以URL的方式分享给其他人。</li>
+</ol>
+<p>除以上特征之外，<code>start.spring.io</code>本身提供了<code>restful API</code>，可以通过简单的<code>http</code>调用来创建项目而不需要访问他的web UI，例如下面的例子，通过<code>curl</code>来创建一个新的项目并下载到本地：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://start.spring.io/starter.zip -d dependencies=web,devtools \</span><br><span class="line">            -d bootVersion=2.3.5.RELEASE -o my-project.zip</span><br></pre></td></tr></table></figure>
+
+<p>这种API调用的方式也是大多数IDE生成<code>SpringBoot</code>项目的底层手段。除使用<code>curl</code>外，还可以通过<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-cli.html#cli" target="_blank" rel="noopener">Spring Boot CLI</a>的方式创建项目，与<code>curl</code>方式是非类似，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ spring init --build=gradle \ </span><br><span class="line">                --java-version=1.8 --dependencies=websocket  \ </span><br><span class="line">                --packaging=jar sample-app.zip</span><br></pre></td></tr></table></figure>
+
+<p><code>Spring Boot CLI</code>的安装可以参考<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started.html#getting-started-installing-the-cli" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>以上<code>start.spring.io</code>以及其衍生工具的使用，除此之外，我们甚至可以搭建自己的<code>Spring Initializr Reference</code>，原理类似与自己运行一个<code>start.spring.io</code>，这里我们就不展开讨论了。<br>更多详情请参考<a href="https://docs.spring.io/initializr/docs/current/reference/html/" target="_blank" rel="noopener">官方文档</a>，</p>
+<h3 id="内置的构建工具"><a href="#内置的构建工具" class="headerlink" title="内置的构建工具"></a>内置的构建工具</h3><p>如果采用上述<code>start.spring.io</code>生成<code>Maven</code>或<code>Gradle</code>项目时，项目中会自带<a href="https://github.com/takari/maven-wrapper" target="_blank" rel="noopener">Maven Wrapper</a>或<a href="https://docs.gradle.org/current/userguide/gradle_wrapper.html" target="_blank" rel="noopener">Grade Wrapper</a>，以<code>Maven</code>项目为例，我们会在项目下看到下面的目录结构，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">├── .mvn</span><br><span class="line">│   └── wrapper</span><br><span class="line">│       ├── MavenWrapperDownloader.java</span><br><span class="line">│       ├── maven-wrapper.jar</span><br><span class="line">│       └── maven-wrapper.properties</span><br><span class="line">├── HELP.md</span><br><span class="line">├── mvnw</span><br><span class="line">├── mvnw.cmd</span><br><span class="line">├── pom.xml</span><br><span class="line">└── src</span><br></pre></td></tr></table></figure>
+
+<p>其中的<code>.mvn</code>、<code>mvnw</code>就是项目自带<code>Maven Wrapper</code>。一般我们在使用<code>Maven</code>时，用到的都是提前安装好的全局的<code>Maven</code>，所有需要构建的程序也都会共享这一个全局的<code>Maven</code>。但是对于某些项目来说，构建是可能需要用到特定的<code>Maven</code>版本，这时做全局安装费时费力，还要污染全局，而使用<code>Maven Wrapper</code>就可以避免类似问题，进而高效地使用特定版本的<code>Maven</code>，<code>Maven Wrapper</code>的工作流程是这样的：</p>
+<ol>
+<li>在执行<code>mvnw</code>命令时，会检查<code>/.m2/wrapper</code>目录下是否有对应版本的<code>Maven</code>安装，如果有，则继续构建；</li>
+<li>如果没有，则根据当前目录下<code>.mvn/wrapper/maven-wrapper.properties</code>中的的<code>distributionUrl</code>属性值来下载<code>Maven</code>，下载后再完成构建；</li>
+</ol>
+<p>有很多同学在生成<code>SpringBoot</code>项目后，直接就把<code>Maven Wrapper</code>相关的文件删除掉了，这里还是建议保留，并且也应该把这些文件一并提交到代码仓库里，这样对于其他开发人员和<code>CI/CD</code>工具也是友好的，大家都可以使用一致的环境来构建项目。</p>
+<h3 id="特有的转换器"><a href="#特有的转换器" class="headerlink" title="特有的转换器"></a>特有的转换器</h3><p><a href="https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#core-convert" target="_blank" rel="noopener">Converter SPI</a>是<code>Spring Framework</code>中非常重要的基本概念，<code>Spring Framework</code>也内置转换器可以实现从<code>String</code>到其他常用数据类型的转换。<code>SpringBoot</code>进一步强化了转换器，引入了3个特有的转换器，可以方便的处理<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html" target="_blank" rel="noopener">Duration</a>、<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Period.html" target="_blank" rel="noopener">Peroid</a>以及<a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/unit/DataSize.html" target="_blank" rel="noopener">DataSize</a>，详情如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Java类型</th>
+<th align="left">单位</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html" target="_blank" rel="noopener">java.time.Duration</a></td>
+<td align="left">ns<br/>us<br/>ms<br/>s<br/>m<br/>h<br/>d</td>
+<td align="left">50s<br/>3d</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Period.html" target="_blank" rel="noopener">java.time.Period</a></td>
+<td align="left">y<br/>m<br/>w<br/>d</td>
+<td align="left">2m<br/>1y3d</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/unit/DataSize.html" target="_blank" rel="noopener">org.springframework.util.unit.DataSize</a></td>
+<td align="left">B<br/>KB<br/>MB<br/>GB<br/>TB</td>
+<td align="left">512B<br/>2MB</td>
+</tr>
+</tbody></table>
+<p>完整的示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConstructorBinding</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(<span class="string">"demo"</span>)</span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DemoProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Duration duration;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Period period;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> DataSize dataSize;</span><br><span class="line"></span><br><span class="line">    DemoProperties(<span class="meta">@DefaultValue</span>(<span class="string">"30s"</span>) Duration duration,</span><br><span class="line">                   <span class="meta">@DefaultValue</span>(<span class="string">"2y3d"</span>) Period period,</span><br><span class="line">                   <span class="meta">@DefaultValue</span>(<span class="string">"5MB"</span>) DataSize dataSize) &#123;</span><br><span class="line">        <span class="keyword">this</span>.duration = duration;</span><br><span class="line">        <span class="keyword">this</span>.period = period;</span><br><span class="line">        <span class="keyword">this</span>.dataSize = dataSize;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>更多详情请参考<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config-conversion" target="_blank" rel="noopener">官方文档</a>。</p>
+<h3 id="特有的事件"><a href="#特有的事件" class="headerlink" title="特有的事件"></a>特有的事件</h3><p><code>Spring Framework</code>本身实现了一整套事件体系，并定义了一组内置的<a href="https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#context-functionality-events" target="_blank" rel="noopener">事件</a>，但这些<code>事件</code>基本上是<code>Context</code>级别的，而不是<code>Application</code>级别的。<code>SpringBoot</code>拓展了<code>Spring Framework</code>的事件体系，并引入了<code>Application Level</code>的一组事件：</p>
+<ol>
+<li>应用程序启动时会触发<code>ApplicationStartingEvent</code>；</li>
+<li>应用程序运行的<code>Environment</code>准备好后，在创建<code>Applicatoin Context</code>之前，会触发<code>ApplicationEnvironmentPreparedEvent</code>；</li>
+<li>在<code>ApplicationContext</code>准备好后，所有<code>ApplicationContextInitializers</code>被执行后，但在所有的<code>Bean</code>定义加载之前，会触发<code>ApplicationContextInitializedEvent</code>事件；</li>
+<li><code>Bean</code>定义加载后，会触发<code>ApplicationPreparedEvent</code>事件；</li>
+<li>在<code>Application Context</code>刷新后，<code>command-line runner</code>被调用之前，会触发<code>ApplicationStartedEvent</code>事件；</li>
+<li>在<code>LivenessState.CORRECT</code>被检测到之后，换言之，应用程序已经被认为处于活跃状态，会触发<code>AvailabilityChangeEvent</code>事件；</li>
+<li>在所有的<code>command-line runner</code>被执行后，会触发<code>ApplicationReadyEvent</code>事件。(原文是“any”而不是“all”，表述不是非常准确，特意提了这个<a href="https://github.com/spring-projects/spring-boot/issues/26180" target="_blank" rel="noopener">issue</a>)；</li>
+<li>在<code>ReadinessState.ACCEPTING_TRAFFIC</code>被简则之后，换言之，应用程序已被认为可以处理外部请求，会再触发<code>AvailabilityChangeEvent</code>事件；</li>
+<li>在应用程序启动过程中产生任何异常，会触发<code>ApplicationFailedEvent</code>事件。</li>
+</ol>
+<p>以上<code>Application Level</code>的各类事件中，最常用的监听<code>ApplicationReadyEvent</code>事件来做其他初始化操作，因为这个时间点，所有的<code>Bean</code>及其依赖都已经创建，这些<code>Bean</code>已经可以使用，例如下面的代码所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">StudentRepo</span> </span>&#123;</span><br><span class="line">    <span class="function">Stream&lt;Student&gt; <span class="title">findAll</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StudentService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> StudentRepo studentRepo;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AtomicReference&lt;Map&lt;Long, Student&gt;&gt; _caches = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@EventListener</span>(ApplicationReadyEvent<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">void</span> <span class="title">init</span>() </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>._caches.set(<span class="keyword">this</span>.studentRepo.findAll()</span><br><span class="line">                                         .collect(Collectors.toConcurrentMap(Student::getId, Function.identity())));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>更多详情请参考<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-application-events-and-listeners" target="_blank" rel="noopener">官方文档</a>。</p>
+<h3 id="运行初始化代码"><a href="#运行初始化代码" class="headerlink" title="运行初始化代码"></a>运行初始化代码</h3><p><a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/CommandLineRunner.html" target="_blank" rel="noopener">CommandLineRunner</a>和<a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html" target="_blank" rel="noopener">ApplicationRunner</a>都可以用来运行初始化代码，<code>CommandLineRunner</code>通过一个字符串数组来访问命令行参数，而<code>ApplicationRunner</code>是通过<a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationArguments.html" target="_blank" rel="noopener">ApplicationArguments</a>来访问。除此之外，可以配置多个<code>CommandLineRunner</code>或者<code>ApplicationRunner</code>，其优先级和执行顺序遵循一下规则：</p>
+<ol>
+<li><code>ApplicationRunner</code>会优先于<code>CommandLineRunner</code>执行；</li>
+<li>多个同类型的<code>Runner</code>可以通过<code>@Order</code>注解来指定运行顺序，但<code>@Order</code>只有放在<code>class</code>上才生效。</li>
+</ol>
+<p>考虑下面的代码，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// incorrect code, don't use it</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@Order</span>(<span class="number">2</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> CommandLineRunner <span class="title">commandLineRunner1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> args -&gt; &#123;</span><br><span class="line">        log.info(<span class="string">"I'm commandline runner 1"</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@Order</span>(<span class="number">1</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> CommandLineRunner <span class="title">commandLineRunner2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> args -&gt; &#123;</span><br><span class="line">        log.info(<span class="string">"I'm commandline runner 2"</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@Order</span>(<span class="number">10</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> ApplicationRunner <span class="title">applicationRunner3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> args -&gt; &#123;</span><br><span class="line">        log.info(<span class="string">"I'm application runner 3"</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其输出结果为，</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">m.d.y.YouDontKnowSpringbootApplication   : I'm application runner 3</span><br><span class="line">m.d.y.YouDontKnowSpringbootApplication   : I'm commandline runner 1</span><br><span class="line">m.d.y.YouDontKnowSpringbootApplication   : I'm commandline runner 2</span><br></pre></td></tr></table></figure>
+<p>可以看到<code>applicationRunner3</code>最先被运行，但<code>commandLineRunner1</code>与<code>commandLineRunner2</code>并没有按照<code>@Order</code>指定的顺序运行，其中的原理可以参考<a href="https://stackoverflow.com/questions/56331925/sort-spring-beans-by-method-level-order-annotation" target="_blank" rel="noopener">这里</a>。只有按照下面的方式才能做到有序，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Order</span>(<span class="number">2</span>)</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CommandLineRunner1</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        log.info(<span class="string">"I'm commandline runner 1"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Order</span>(<span class="number">1</span>)</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CommandLineRunner2</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        log.info(<span class="string">"I'm commandline runner 2"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其输出结果为，</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">me.danielpf.ydtk.CommandLineRunner2      : I'm commandline runner 2</span><br><span class="line">me.danielpf.ydtk.CommandLineRunner1      : I'm commandline runner 1</span><br></pre></td></tr></table></figure>
+<blockquote><p>上面已经提到过，<code>ApplicationReadyEvent</code>会在所有的<code>Runner</code>运行之后才会触发，所以尽量避免既在<code>Runner</code>中执行过长、过慢的逻辑又要依赖于监听<code>ApplicationReadyEvent</code>，考虑下面的代码，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function">pulic CommandLineRunner <span class="title">commandLineRunner</span><span class="params">()</span> </span>&#123;</span><br><span class="line"> <span class="keyword">return</span> args -&gt; &#123;</span><br><span class="line">     log.info(<span class="string">"start commandline runner..."</span>);</span><br><span class="line">     TimeUnit.SECONDS.sleep(<span class="number">10</span>);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">@EentListener</span>(ApplicationReadyEvent<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">pulic</span> <span class="title">void</span> <span class="title">ready</span>() </span>&#123;</span><br><span class="line">    log.info(<span class="string">"application ready..."</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+其输出结果为，
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2021-04-21 15:57:32.379  INFO 56531 --- [           main] m.d.y.YouDontKnowSpringbootApplication   : start commandline runner...</span><br><span class="line">2021-04-21 15:57:42.386  INFO 56531 --- [           main] m.d.y.YouDontKnowSpringbootApplication   : application ready...</span><br></pre></td></tr></table></figure><footer><strong>注意</strong></footer></blockquote>
+
+
+<p>更多详情请参考<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-command-line-runner" target="_blank" rel="noopener">官方文档</a>。</p>
+<h3 id="Web-Application类型"><a href="#Web-Application类型" class="headerlink" title="Web Application类型"></a>Web Application类型</h3><p><code>SpringBoot</code>会根据依赖尝试创建合适的<code>Web Environment</code>，其默认规则可以参考下面的表格，</p>
+<table>
+<thead>
+<tr>
+<th align="left">Starter</th>
+<th align="left">Application Conext</th>
+<th align="left">Web Application Type</th>
+<th align="left">Web Container</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>spring-boot-starter-web</code> only</td>
+<td align="left"><a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/web/servlet/context/AnnotationConfigServletWebServerApplicationContext.html" target="_blank" rel="noopener">AnnotationConfigServletWebServer</a></td>
+<td align="left"><code>SERVLET</code></td>
+<td align="left">Tomcat</td>
+</tr>
+<tr>
+<td align="left"><code>spring-boot-starter-webflux</code> only</td>
+<td align="left"><a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/web/reactive/context/AnnotationConfigReactiveWebServerApplicationContext.html" target="_blank" rel="noopener">AnnotationConfigReactiveWebServer</a></td>
+<td align="left"><code>REACTIVE</code></td>
+<td align="left">Netty</td>
+</tr>
+<tr>
+<td align="left"><code>spring-boot-starter-web</code><br /><code>spring-boot-starter-webflux</code></td>
+<td align="left"><a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/web/servlet/context/AnnotationConfigServletWebServerApplicationContext.html" target="_blank" rel="noopener">AnnotationConfigServletWebServer</a></td>
+<td align="left"><code>SERVLET</code></td>
+<td align="left">Tomcat</td>
+</tr>
+<tr>
+<td align="left"><code>spring-boot-starter</code></td>
+<td align="left"><a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/AnnotationConfigApplicationContext.html" target="_blank" rel="noopener">AnnotationConfig</a></td>
+<td align="left"><code>NONE</code></td>
+<td align="left">N/A</td>
+</tr>
+</tbody></table>
+<p>需要注意的是，</p>
+<ol>
+<li>如果<code>spring-boot-starter-web</code>与<code>spring-boot-starter-webflux</code>混用，那么<code>Web Environment</code>还是会被设置为<code>SERVLET</code>，这种情况是为了兼容在<code>SERVLET</code>应用中使用<code>Reactive API</code>，例如<a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/reactive/function/client/WebClient.html" target="_blank" rel="noopener">WebClient</a>；</li>
+<li>可以通过编程的方式，手动设置<code>WebApplicationType</code>，甚至关闭<code>Web Environment</code>，例如下面的代码是通过<code>flunt-builder</code>的方式关闭<code>Web Environment</code>，</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">new</span> SpringApplicationBuilder()</span><br><span class="line">            .sources(YouDontKnowSpringbootApplication<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">            .<span class="title">web</span>(<span class="title">WebApplicationType</span>.<span class="title">NONE</span>)</span></span><br><span class="line"><span class="class">            .<span class="title">run</span>(<span class="title">args</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>更多详情请参考<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-web-environment" target="_blank" rel="noopener">官方文档</a>。</p>
+<h3 id="使用JSON配置应用"><a href="#使用JSON配置应用" class="headerlink" title="使用JSON配置应用"></a>使用JSON配置应用</h3><p>大多数场景下，我们一般会使用<code>properties</code>文件或者<code>YAML</code>文件，结合命令行参数来配置<code>SpringBoot</code>应用程序，除此之外，我们还可以通过<code>JSON</code>来配置应用程序，我们可以把基于<code>JSON</code>的配置理解成为一个增强版的命令行。我们写在<code>JSON</code>里面的配置，都会被merge进当前的<code>Environment</code>。</p>
+<p><code>JSON</code>配置可以通过以下几种方式传递给应用程序，这里借官方文档的几个示例说明，</p>
+<ol>
+<li>通过<code>UN*X shell</code>的环境变量传递：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ SPRING_APPLICATION_JSON=<span class="string">'&#123;"acme":&#123;"name":"test"&#125;&#125;'</span> java -jar myapp.jar</span><br></pre></td></tr></table></figure></li>
+<li>通过<code>system property</code>传递：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ java -Dspring.application.json=<span class="string">'&#123;"acme":&#123;"name":"test"&#125;&#125;'</span> -jar myapp.jar</span><br></pre></td></tr></table></figure></li>
+<li>通过命令行参数传递：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ java -jar myapp.jar --spring.application.json=<span class="string">'&#123;"acme":&#123;"name":"test"&#125;&#125;'</span></span><br></pre></td></tr></table></figure></li>
+<li>如果应用程序部署在传统的web中间件中，可以通过<code>JNDI</code>传递，变量名称为：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java:comp/env/spring.application.json</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>更多详情请参考<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config-application-json" target="_blank" rel="noopener">官方文档</a>。</p>
+<h3 id="基于Profile的Logback"><a href="#基于Profile的Logback" class="headerlink" title="基于Profile的Logback"></a>基于Profile的Logback</h3><p>在<code>SpringBoot</code>中使用<code>Logback</code>也能享受到<code>Spring Profile</code>所带来的便利，基于<code>Profile</code>的<code>Logback</code>配置文件为<code>logback-spring.xml</code>，放置在<code>classpath</code>下会被<code>SpringBoot</code>自动加载。<br>我们可以使用<code>springProfile</code>来控制不同<code>Profile</code>下有那些<code>appender</code>会生效，例如这样，</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">springProfile</span> <span class="attr">name</span>=<span class="string">"dev"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"ROLL_FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span><br><span class="line">        ......</span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span>    </span><br><span class="line"><span class="tag">&lt;/<span class="name">springProfile</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">springProfile</span> <span class="attr">name</span>=<span class="string">"staging | prod"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"MAILER"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.net.SMTPAppender"</span>&gt;</span></span><br><span class="line">        ......</span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span>    </span><br><span class="line"><span class="tag">&lt;/<span class="name">springProfile</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以使用<code>springProperty</code>来定义一些属性，并在后面的配置引用这些属性，</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">springProperty</span> <span class="attr">scope</span>=<span class="string">"context"</span> <span class="attr">name</span>=<span class="string">"mailSubjectPrefix"</span> <span class="attr">source</span>=<span class="string">"mail.subject.prefix"</span> <span class="attr">defaultValue</span>=<span class="string">""</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">springProperty</span> <span class="attr">scope</span>=<span class="string">"context"</span> <span class="attr">name</span>=<span class="string">"component"</span> <span class="attr">source</span>=<span class="string">"mail.component"</span> <span class="attr">defaultValue</span>=<span class="string">"[my-app]"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">springProperty</span> <span class="attr">name</span>=<span class="string">"LOG_PATH"</span> <span class="attr">source</span>=<span class="string">"logging.path"</span> <span class="attr">defaultValue</span>=<span class="string">"/var/log/my-app/"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">springProperty</span> <span class="attr">name</span>=<span class="string">"LOG_FILE"</span> <span class="attr">source</span>=<span class="string">"logging.path"</span> <span class="attr">defaultValue</span>=<span class="string">"main"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>更多详情请参考<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-logback-extensions" target="_blank" rel="noopener">官方文档</a>。</p>
+<h3 id="探活"><a href="#探活" class="headerlink" title="探活"></a>探活</h3><p><a href="https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-enabling" target="_blank" rel="noopener">Spring Boot Actuator</a>提供了非常强大的系统监控功能。在K8s等容器环境部署<code>SpringBoot</code>应用时，我们可以可以借助<code>Spring Boot Actuator</code>内置的<code>Health Indicator</code>来实现探活，一般情况下借助<code>/actuator/health/liveness</code>与<code>/actuator/health/readiness</code>这两个endpoint，</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">livenessProbe:</span></span><br><span class="line">  <span class="attr">httpGet:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/actuator/health/liveness</span></span><br><span class="line">    <span class="attr">port:</span> <span class="string">&lt;actuator-port&gt;</span></span><br><span class="line">  <span class="attr">failureThreshold:</span> <span class="string">...</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="string">...</span></span><br><span class="line"></span><br><span class="line"><span class="attr">readinessProbe:</span></span><br><span class="line">  <span class="attr">httpGet:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/actuator/health/readiness</span></span><br><span class="line">    <span class="attr">port:</span> <span class="string">&lt;actuator-port&gt;</span></span><br><span class="line">  <span class="attr">failureThreshold:</span> <span class="string">...</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="string">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们还可以实现自己的<code>HealthIndicators</code>，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.Health;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.actuate.health.HealthIndicator;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyHealthIndicator</span> <span class="keyword">implements</span> <span class="title">HealthIndicator</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Health <span class="title">health</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> errorCode = check(); <span class="comment">// perform some specific health check</span></span><br><span class="line">        <span class="keyword">if</span> (errorCode != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Health.down().withDetail(<span class="string">"Error Code"</span>, errorCode).build();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Health.up().build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>更多详情请参考<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-kubernetes-probes" target="_blank" rel="noopener">官方文档</a>。</p>
+<h3 id="多数据源"><a href="#多数据源" class="headerlink" title="多数据源"></a>多数据源</h3><p>在检测到有数据库访问相关的依赖后，<code>SpringBoot</code>会尝试<code>Auto Config</code>数据源，我们只需要设定数据源的各类属性即可。但在某些业务场景下，我们需要多个数据源，我们可以借助<code>SpringBoot</code>内置的一些工具，比较方便地配置多个数据源。下面的代码展示了从配置上彻底分开的两个不同数据源，</p>
+<pre><code class="java"><span class="meta">@Bean</span>
+<span class="meta">@Primary</span>
+<span class="meta">@ConfigurationProperties</span>(<span class="string">"app.datasource.first"</span>)
+<span class="function"><span class="keyword">public</span> DataSourceProperties <span class="title">firstDataSourceProperties</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> <span class="keyword">new</span> DataSourceProperties();
+}
+
+<span class="meta">@Bean</span>
+<span class="meta">@Primary</span>
+<span class="meta">@ConfigurationProperties</span>(<span class="string">"app.datasource.first.configuration"</span>)
+<span class="function"><span class="keyword">public</span> HikariDataSource <span class="title">firstDataSource</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> firstDataSourceProperties().initializeDataSourceBuilder().type(HikariDataSource<span class="class">.<span class="keyword">class</span>).<span class="title">build</span>()</span>;
+}
+
+<span class="meta">@Bean</span>
+<span class="meta">@ConfigurationProperties</span>(<span class="string">"app.datasource.second"</span>)
+<span class="function"><span class="keyword">public</span> DataSourceProperties <span class="title">secondDataSourceProperties</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> <span class="keyword">new</span> DataSourceProperties();
+}
+
+<span class="meta">@Bean</span>
+<span class="meta">@ConfigurationProperties</span>(<span class="string">"app.datasource.second.configuration"</span>)
+<span class="function"><span class="keyword">public</span> BasicDataSource <span class="title">secondDataSource</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> secondDataSourceProperties().initializeDataSourceBuilder().type(BasicDataSource<span class="class">.<span class="keyword">class</span>).<span class="title">build</span>()</span>;
+}</code></pre>
+<p>上述代码的要点如下：</p>
+<ol>
+<li>可以借助<a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/jdbc/DataSourceProperties.html" target="_blank" rel="noopener">DataSourceProperties</a>来绑定特定前缀的数据源属性(这些属性仍为标准属性，只是前缀不同)，并通过<code>initializeDataSourceBuilder()</code>和<code>type()</code>创建特定类型的数据源；</li>
+<li>可以借助<code>@ConfigurationProperties</code>再次将自定义的属性绑定到已经在上一步创建的数据源对象上；</li>
+<li>一定要通过<code>@Primary</code>来指定默认的数据源。</li>
+</ol>
+<p>关于多数据源的动态切换，不在本文做过多讨论，可以参考这篇<a href="https://spring.io/blog/2007/01/23/dynamic-datasource-routing/" target="_blank" rel="noopener">Blog</a>。<br>更多详情请参考<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-two-datasources" target="_blank" rel="noopener">官方文档</a>。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2021-04-22T14:41:27.978Z" itemprop="dateUpdated">2021-04-22 22:41:27</time>
+</span><br>
+
+
+        
+        引用请注明文章出处：<a href="/2021/04/19/you-dont-know-springboot-01/" target="_blank" rel="external">https://danielpf.me/2021/04/19/you-dont-know-springboot-01/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://danielpf.me">
+            <img src="/img/avatar-yumao.jpg" alt="鹏飞Daniel">
+            鹏飞Daniel
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springboot/" rel="tag">springboot</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/&title=《你不知道的SpringBoot (Part 1)》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/&title=《你不知道的SpringBoot (Part 1)》 — 鹏飞Daniel的技术足迹&source=随着SpringBoot日渐流行，有关SpringBoot的各类“心经”、“秘籍”、“从入门到精通”之类的文章或者书籍琳琅满目、层出不穷，本文无意与这些典..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《你不知道的SpringBoot (Part 1)》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2020/10/05/reactive-messaging-kt/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Kotlin + Spring Cloud Stream构建实时消息系统</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "ymjtakuY1KwMihG6FxtgO1K7-gzGzoHsz",
+            appKey: "iL3xdrITiNRcnSNxLGoFYs4j",
+            avatar: "mm",
+            placeholder: "来啊，造作啊!",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        授人玫瑰，手有余香~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechatpay.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechatpay.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>鹏飞Daniel &copy; 2020 - 2021</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/&title=《你不知道的SpringBoot (Part 1)》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/&title=《你不知道的SpringBoot (Part 1)》 — 鹏飞Daniel的技术足迹&source=随着SpringBoot日渐流行，有关SpringBoot的各类“心经”、“秘籍”、“从入门到精通”之类的文章或者书籍琳琅满目、层出不穷，本文无意与这些典..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《你不知道的SpringBoot (Part 1)》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2021/04/19/you-dont-know-springboot-01/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJUlEQVR42u3aS3KDUAxEUe9/02TqVILoVhtXIV1GLsDmHQayPu/1ko/j7fh7pr76fubsu2ff+vABAwaMxzKO8ujdozxFuao8FwYMGHsYZw+u76kB9eJ6d56ehwEDBgwh7XPTwfpOGDBgwMgZbnXZOw8DBgwYboGqh1G30P1qLQ4DBowHMtyg+c3Pt8w3YMCA8SjGYR51cqYvKw/fv1YFAwaM0Qw9wLkt+6Qw7q0HBgwYexj6uLFenF4G66NQO3uFAQPGaEYytnRDtt6Yu+DBgAFjKEPfHpGHbGVjWe8FwYABYxujd95NMfVBppQmwoABYwHDDX+95ebpoxTvYcCAMY6hN8jsH5VfXLLZ659aHAYMGEMZvVDrFsNuP99t/8GAAWMnI2mH6WXqLaEZBgwY4xh5uuY2znptOLvpBgMGjBEMN4FLxpm9YYOEgQEDxkpGsv1CL0T15148CwYMGGsYbnJ29xjAKI9hwIAxmlEncL1NYPov6AMGKejDgAFjAeO+AKoMFXrF7cW/BwwYMBYw3DBaB8d8s6z9jmHAgDGOoSdkyQbW5NekzRYwYMAYxzjMQ0e6g8le+ggDBowNjF6I1Jfuvg53qGnDYMCA8ViGviBjoCgXpcmY0/j3gAEDxgiG0ghTAmWSDiarhQEDBgx3A1k+pLw94MKAAWMlo166cjV5FgwYMDYwktaYsvSkJSeFYxgwYIxmRKVjq0H2qW0WMGDAWMD4Ae8x5POJPwLKAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+
+    <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+    <script>
+      if (window.mermaid) {
+        mermaid.initialize({theme: 'forest'});
+      }
+    </script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

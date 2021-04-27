@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Reactor技巧4则 | 鹏飞Daniel的技术足迹 | 尔曹身与名俱灭,不废江河万古流</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="reactive,reactor">
+    <meta name="description" content="本篇文章旨在介绍一些不常用但又非常有用的Reactor Operator。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactor技巧4则">
+<meta property="og:url" content="https://danielpf.me/2020/05/03/4-reactor-tips/index.html">
+<meta property="og:site_name" content="鹏飞Daniel的技术足迹">
+<meta property="og:description" content="本篇文章旨在介绍一些不常用但又非常有用的Reactor Operator。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-03T04:38:29.000Z">
+<meta property="article:modified_time" content="2020-11-19T06:00:25.146Z">
+<meta property="article:author" content="鹏飞Daniel">
+<meta property="article:tag" content="reactive">
+<meta property="article:tag" content="reactor">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="鹏飞Daniel的技术足迹" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar-yumao.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">鹏飞Daniel</h5>
+          <a href="mailto:dipengfei1982@gmail.com" title="dipengfei1982@gmail.com" class="mail">dipengfei1982@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/dipengfei" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://www.linkedin.com/in/daniel-pf" target="_blank" >
+                <i class="icon icon-lg icon-linkedin"></i>
+                Linkedin
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Reactor技巧4则</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Reactor技巧4则</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2020-05-03T04:38:29.000Z" itemprop="datePublished" class="page-time">
+  2020-05-03
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%8A%80%E5%B7%A7/">技巧</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Tip-1-filterWhen"><span class="post-toc-number">1.</span> <span class="post-toc-text">Tip 1: filterWhen</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Tip-2-expand"><span class="post-toc-number">2.</span> <span class="post-toc-text">Tip 2: expand</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Tip-3-transform-amp-as"><span class="post-toc-number">3.</span> <span class="post-toc-text">Tip 3: transform &amp; as</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Tip-4-using"><span class="post-toc-number">4.</span> <span class="post-toc-text">Tip 4: using</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#参考资料"><span class="post-toc-number">6.</span> <span class="post-toc-text">参考资料</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-4-reactor-tips"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Reactor技巧4则</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2020-05-03 12:38:29" datetime="2020-05-03T04:38:29.000Z"  itemprop="datePublished">2020-05-03</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%8A%80%E5%B7%A7/">技巧</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>本篇文章旨在介绍一些不常用但又非常有用的<a href="https://projectreactor.io/docs/core/release/reference/#which-operator" target="_blank" rel="noopener">Reactor Operator</a>。</p>
+<a id="more"></a>
+
+<h3 id="Tip-1-filterWhen"><a href="#Tip-1-filterWhen" class="headerlink" title="Tip 1: filterWhen"></a>Tip 1: filterWhen</h3><p>与Java内置的<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/stream/package-summary.html" target="_blank" rel="noopener">Stream API</a>类似，<code>Reactor</code>也提供了<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#filter-java.util.function.Predicate-" target="_blank" rel="noopener">fitler</a>操作符，用于按照某些条件来过滤元素，但该操作符并不能很好处理返回值是<a href="https://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/org/reactivestreams/Publisher.html" target="_blank" rel="noopener">Publisher&lt;Boolean&gt;</a>的Predicate，例如希望判断某个key是否在Redis中存在，且使用Reactive的形式访问Redis，类似下面的code，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;Boolean&gt; <span class="title">keyExists</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    ReactiveStringRedisTemplate template = <span class="comment">//injected by container;</span></span><br><span class="line">    <span class="keyword">return</span> template.hasKey(key);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时，<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#filterWhen-java.util.function.Function-" target="_blank" rel="noopener">filterWhen</a>操作符就非常有用，其方法签名为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Flux&lt;T&gt; <span class="title">filterWhen</span><span class="params">(Function&lt;? <span class="keyword">super</span> T,? extends Publisher&lt;Boolean&gt;&gt; asyncPredicate)</span></span></span><br></pre></td></tr></table></figure>
+<p>我们可以看到用于过滤的函数由一个简单的<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Predicate.html" target="_blank" rel="noopener">Predicate</a>变成了一个返回值为<a href="https://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/org/reactivestreams/Publisher.html" target="_blank" rel="noopener">Publisher&lt;Boolean&gt;</a>的<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html" target="_blank" rel="noopener">Function</a>，对于上面的判断，处理起来就很自然了，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ReactiveStringRedisTemplate template = <span class="comment">//injected by container;</span></span><br><span class="line"></span><br><span class="line">Flux.just(<span class="string">"key1"</span>, <span class="string">"key2"</span>, <span class="string">"key3"</span>)</span><br><span class="line">    .map(key -&gt; <span class="string">"key_prefix:"</span> + key)</span><br><span class="line">    .filterWhen(template::hasKey)</span><br><span class="line">    .subscribe();</span><br></pre></td></tr></table></figure>
+
+<p>以下几点需要注意：</p>
+<ul>
+<li>当<a href="https://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/org/reactivestreams/Publisher.html" target="_blank" rel="noopener">Publisher</a>的元素为empty时，等同于false;</li>
+<li>当<a href="https://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/org/reactivestreams/Publisher.html" target="_blank" rel="noopener">Publisher</a>为<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html" target="_blank" rel="noopener">Flux</a>时，只有第一个元素参与比较，其他元素将被忽略;</li>
+</ul>
+<h3 id="Tip-2-expand"><a href="#Tip-2-expand" class="headerlink" title="Tip 2: expand"></a>Tip 2: expand</h3><p>我们在日常处理各种程序逻辑时，经常会处理分页或者递归的数据，此类数据在<strong>Imperative</strong>编程模式下很容易处理，那么如何在<strong>Reactove</strong>编程模式下处理呢？其实<code>Reactor</code>为我们提供了<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#expand-java.util.function.Function-" target="_blank" rel="noopener">expand</a>方法，可以方便地处理类似数据，其方法签名如下，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Flux&lt;T&gt; <span class="title">expand</span><span class="params">(Function&lt;? <span class="keyword">super</span> T,? extends Publisher&lt;? extends T&gt;&gt; expander)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>我们只需要提供一个具备分页或者递归边界的<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html" target="_blank" rel="noopener">Function</a>就可以了，<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#expand-java.util.function.Function-" target="_blank" rel="noopener">expand</a>会自动帮我们把数据整理到<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html" target="_blank" rel="noopener">Flux</a>中。假设我们有这样的一个方法，用于<strong>递归</strong>(<strong>分页</strong>可以理解为<strong>递归</strong>的一种特殊形式)地加载数据，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Mono&lt;String&gt; <span class="title">composeRecursively</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//A -&gt; AA -&gt; AAA</span></span><br><span class="line">    <span class="keyword">if</span> (key.length() &gt;= <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> Mono.empty();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Mono.just(key + key.charAt(<span class="number">0</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意，以上代码中，’key.length() &gt;= 3’就是所谓的递归边界。当使用<code>expand</code>方法按照上面的逻辑处理<code>&quot;A&quot;, &quot;B&quot;, &quot;C&quot;</code>数据时，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.just(<span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span>)</span><br><span class="line">    .expand(<span class="keyword">this</span>::composeRecursively)</span><br><span class="line">    .subscribe(log::info);</span><br></pre></td></tr></table></figure>
+
+<p>输出结果为，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">A</span><br><span class="line">B</span><br><span class="line">C</span><br><span class="line">AA</span><br><span class="line">BB</span><br><span class="line">CC</span><br><span class="line">AAA</span><br><span class="line">BBB</span><br><span class="line">CCC</span><br></pre></td></tr></table></figure>
+
+<p>我们都知道，递归的本质是对树的遍历，从上面的执行结果，我们可以看到，<code>expand</code>是按照<strong>广度优先</strong>来遍历树的，那么如果我们的程序逻辑是顺序敏感的，且希望使用<strong>深度优先</strong>来遍历呢？<code>Reactor</code>为我们提供了<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#expandDeep-java.util.function.Function-" target="_blank" rel="noopener">expandDeep</a>方法，其防方法名如下，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Flux&lt;T&gt; <span class="title">expandDeep</span><span class="params">(Function&lt;? <span class="keyword">super</span> T,? extends Publisher&lt;? extends T&gt;&gt; expander)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>当我们使用该方法处理上面的’composeRecursively’数据时，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.just(<span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span>)</span><br><span class="line">    .expandDeep(<span class="keyword">this</span>::composeRecursively)</span><br><span class="line">    .subscribe(log::info);</span><br></pre></td></tr></table></figure>
+
+<p>输出结果变为，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">A</span><br><span class="line">AA</span><br><span class="line">AAA</span><br><span class="line">B</span><br><span class="line">BB</span><br><span class="line">BBB</span><br><span class="line">C</span><br><span class="line">CC</span><br><span class="line">CCC</span><br></pre></td></tr></table></figure>
+
+<p>由此可见，<strong>深度优先</strong>遍历的目的就达到了。</p>
+<h3 id="Tip-3-transform-amp-as"><a href="#Tip-3-transform-amp-as" class="headerlink" title="Tip 3: transform &amp; as"></a>Tip 3: transform &amp; as</h3><p><a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#transform-java.util.function.Function-" target="_blank" rel="noopener">transform</a>和<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#as-java.util.function.Function-" target="_blank" rel="noopener">as</a>都属于<strong>Mutualization</strong>(字面含义为“相互化”)操作，这类操作与<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#map-java.util.function.Function-" target="_blank" rel="noopener">map</a>、<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#flatMap-java.util.function.Function-" target="_blank" rel="noopener">flatMap</a>等最大的区别为，前者的操作对象是<code>Publisher</code>中的<strong>元素</strong>，而后者操作的是<code>Publisher</code>的<strong>本身</strong>。<br>首先我们看一下<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#transform-java.util.function.Function-" target="_blank" rel="noopener">transform</a>的方法签名，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> &lt;V&gt; <span class="function">Flux&lt;V&gt; <span class="title">transform</span><span class="params">(Function&lt;? <span class="keyword">super</span> Flux&lt;T&gt;,? extends Publisher&lt;V&gt;&gt; transformer)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到作为参数的<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html" target="_blank" rel="noopener">Function</a>，其入参出参皆为<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html" target="_blank" rel="noopener">Flux</a>，而不是元素，那么我们就可以在这个<code>Function</code>中完成对<code>Flux</code>的处理或变换，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Function&lt;Flux&lt;Integer&gt;, Flux&lt;String&gt;&gt; mapAndApplySchedulers = </span><br><span class="line">    f -&gt; f.map(String::valueOf)</span><br><span class="line">          .subscribeOn(Schedulers.boundedElastic())</span><br><span class="line">          .publishOn(Schedulers.parallel());</span><br><span class="line"></span><br><span class="line">Flux.just(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>).transform(mapAndApplySchedulers).subscribe();</span><br></pre></td></tr></table></figure>
+
+<p>由此可见，当我们需要处理的是<code>Flux</code>本身而不是其中的元素的时候，<code>transform</code>是最合适的选择。</p>
+<p>我们再来看<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#as-java.util.function.Function-" target="_blank" rel="noopener">as</a>，其方法签名为，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> &lt;P&gt; <span class="function">P <span class="title">as</span><span class="params">(Function&lt;? <span class="keyword">super</span> Flux&lt;T&gt;,P&gt; transformer)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>与<code>transform</code>相比，其<code>Function</code>输出参数由<code>Flux</code>变成了一个<code>P</code>，不再限定为<code>Publisher</code>，而整个函数的返回值也不再限定为<code>Flux</code>，这样的逻辑使得<code>as</code>可以作为衔接多步<code>Publisher</code>操作并保持方法<strong>流式调用(fluent)</strong>风格的不二选择，请看下面的例子，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Flux&lt;Integer&gt; i = Flux.range(<span class="number">1</span>, <span class="number">10</span>)</span><br><span class="line">                      .map(i -&gt; i + <span class="number">2</span>)</span><br><span class="line">                      .map(i -&gt; i * <span class="number">10</span>);</span><br><span class="line">Mono&lt;String&gt; s = MathFlux.sumInt(i)</span><br><span class="line">                         .map(isum -&gt; <span class="string">"sum="</span> + isum);</span><br></pre></td></tr></table></figure>
+
+<p><code>MathFlux.sumInt</code>接收一个<code>Flux&lt;Integer&gt;</code>作为参数进行后续运算，多个步骤导致这种调用方式破坏了<strong>流式调用(fluent)</strong>风格，那么使用<code>as</code>可以解决，<strong>流式调用(fluent)</strong>风格得以保留，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Mono&lt;String&gt; s =  Flux.range(<span class="number">1</span>, <span class="number">10</span>)</span><br><span class="line">                      .map(i -&gt; i + <span class="number">2</span>)</span><br><span class="line">                      .map(i -&gt; i * <span class="number">10</span>)</span><br><span class="line">                      .as(MathFlux::sumInt)</span><br><span class="line">                      .map(isum -&gt; <span class="string">"sum="</span> + isum);</span><br></pre></td></tr></table></figure>
+
+<p>再看一个在<code>Spring Webflux</code>里经常出现的场景，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title">handle</span><span class="params">(ServerRequest request)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> result = Flux.just(<span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span>)</span><br><span class="line">                     .map(String::toLowerCase);</span><br><span class="line">    <span class="keyword">return</span> ServerResponse.ok().body(result, String<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上代码中，在第一步，产生了作为response body的result，在第二步再组装成了<code>ServerResponse</code>，<strong>流式调用(fluent)</strong>风格遭到破坏，可以使用<code>as</code>处理，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> Flux.just(<span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span>)</span><br><span class="line">           .map(String::toLowerCase)</span><br><span class="line">           .as(f -&gt; ServerResponse.ok().body(f, String<span class="class">.<span class="keyword">class</span>))</span>;</span><br></pre></td></tr></table></figure>
+
+<p>当然，使用<code>transform</code>亦可解决问题，就是稍显冗长一些，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> Flux.just(<span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span>)</span><br><span class="line">           .map(String::toLowerCase)</span><br><span class="line">           .transform(f -&gt; ServerResponse.ok().body(f, String<span class="class">.<span class="keyword">class</span>))</span></span><br><span class="line"><span class="class">           .<span class="title">next</span>()</span>;</span><br></pre></td></tr></table></figure>
+
+<p>以上代码对比，在某些场景下，我们可以把<code>as</code>理解为<code>transform + next</code>的简写方式。</p>
+<h3 id="Tip-4-using"><a href="#Tip-4-using" class="headerlink" title="Tip 4: using"></a>Tip 4: using</h3><p><code>Reactor</code>提供及其丰富的API来创建一个<code>Publisher</code>，其中有很多方法用于桥接非Reactive的数据类型，之中比较有用的是<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#fromStream-java.util.stream.Stream-" target="_blank" rel="noopener">fromStream</a>，通过使用该API，可以非常容易的创建一个<code>Publisher</code>，由于<code>Stream</code>的懒运行特性，使得<code>Stream</code>作为<code>imperative</code>编程风格下的产物，却具备了先天的<code>Reactive</code>编程风格的适配能力。例如下面的代码，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.fromStream(Stream.of(<span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span>))</span><br><span class="line">    .map(String::toLowerCase)</span><br><span class="line">    .subscribe();</span><br></pre></td></tr></table></figure>
+
+<p>但这里又一个陷阱，并不是所有的<code>Stream</code>在使用后都不需要<code>close</code>，很多与IO或者下层资源有关的<code>Stream</code>在使用后是需要显式关闭的，或者采用等效的隐式方式关闭，例如<code>try-with-resources</code>。有两个非常典型的这一类<code>Stream</code>的例子，一个是<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/nio/file/Files.html#lines(java.nio.file.Path)" target="_blank" rel="noopener">Files.lines(Path path)</a>返回的<code>Stream</code>，另一个就是在<a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-streaming" target="_blank" rel="noopener">String Data JPA</a>的Repo中返回的<code>Stream</code>。假设我们需要从文件中读取每一行并作为<code>Flux</code>的源，为了保证读取文件而产生的<code>Stream</code>可以被正确关闭，代码上要做额外的处理，而不只是使用<code>Flux.fromStream</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> lines = Files.lines(Paths.get(<span class="string">"test.txt"</span>));</span><br><span class="line">Flux.fromStream(lines)</span><br><span class="line">   .filter(s -&gt; s.length() &gt; <span class="number">10</span>)</span><br><span class="line">   .map(String::toLowerCase)</span><br><span class="line">   .doFinally(signalType -&gt; lines.close())</span><br><span class="line">   .subscribe();</span><br></pre></td></tr></table></figure>
+
+<p>首先肯定，以上代码可以达到目的，但仍有不足之处：</p>
+<ol>
+<li>破坏了<strong>流式调用(fluent)</strong>风格；</li>
+<li>在使用<strong>副作用(side-effect)</strong>来处理<code>Publisher</code>外部的资源。</li>
+</ol>
+<p>那么如何可以比较优雅地关闭<code>Stream</code>而又避免上面的两个不足呢？答案就是<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#using-java.util.concurrent.Callable-java.util.function.Function-java.util.function.Consumer-" target="_blank" rel="noopener">using</a>，其方法签名如下，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T,D&gt; <span class="function">Flux&lt;T&gt; <span class="title">using</span><span class="params">(Callable&lt;? extends D&gt; resourceSupplier,</span></span></span><br><span class="line"><span class="function"><span class="params">                                  Function&lt;? <span class="keyword">super</span> D,? extends Publisher&lt;? extends T&gt;&gt; sourceSupplier,</span></span></span><br><span class="line"><span class="function"><span class="params">                                  Consumer&lt;? <span class="keyword">super</span> D&gt; resourceCleanup)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，<code>using</code>方法包含3个参数，<code>resourceSupplier</code>表示一个数据源，例如产生<code>Stream</code>的各种方式；<code>sourceSupplier</code>代表一个使用该数据源产生<code>Publisher</code>的一个函数，例如<code>Flux.fromStream()</code>，最后一个<code>resourceCleanup</code>代表一个清理回调，可以清理由<code>resourceSupplier</code>产生的数据源。OK，一切水到渠成啦，用<code>using</code>改写文件读取的例子，如下面的代码所示，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Flux.using(() -&gt; Files.lines(Paths.get(<span class="string">"test.txt"</span>)), Flux::fromStream, BaseStream::close)</span><br><span class="line">    .filter(s -&gt; s.length() &gt; <span class="number">10</span>)</span><br><span class="line">    .map(String::toLowerCase)</span><br><span class="line">    .subscribe();</span><br></pre></td></tr></table></figure>
+
+<p>如代码所以，<strong>流式调用(fluent)</strong>风格得以保留，也避免了<strong>副作用(side-effect)</strong>。<code>using</code>还有更复杂的方式，<a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#usingWhen-org.reactivestreams.Publisher-java.util.function.Function-java.util.function.Function-java.util.function.BiFunction-java.util.function.Function-" target="_blank" rel="noopener">usingWhen</a>，请自行参考文档。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>Reactor</code>所提供的API及其丰富，如套用<code>Java Stream</code>API的部分理念，对于大部分API，相对容易理解，而真正难于掌握的，是在<code>Reactive</code>编程风格的大前提下，产生的<code>Reactive</code>独有的方法及其操作风格。本篇文章只是介绍了在日常的使用过程中，沉淀下来的几个例子，虽不常用，但在某些场景下，却非常有用，甚至不容易被其他方式替代。相信在项目的驱动下，在使用<code>Reactive</code>编程风格及<code>Reactor API</code>的过程中，还会遇到新的问题和挑战，如有积累，会再找机会与大家分享。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<li><a href="https://stackoverflow.com/questions/47348706/compose-vs-transform-vs-as-vs-map-in-flux-and-mono" target="_blank" rel="noopener">compose() vs. transform() vs. as() vs. map() in Flux and Mono</a></li>
+<li><a href="https://www.logicbig.com/tutorials/misc/reactive-programming/reactor/transform-operation.html" target="_blank" rel="noopener">Reactor - Using transform Operation</a></li>
+<li><a href="https://simonbasle.github.io/2017/10/file-reading-in-reactor/" target="_blank" rel="noopener">File Reading in Reactor</a></li>
+</ol>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-11-19T06:00:25.146Z" itemprop="dateUpdated">2020-11-19 14:00:25</time>
+</span><br>
+
+
+        
+        引用请注明文章出处：<a href="/2020/05/03/4-reactor-tips/" target="_blank" rel="external">https://danielpf.me/2020/05/03/4-reactor-tips/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://danielpf.me">
+            <img src="/img/avatar-yumao.jpg" alt="鹏飞Daniel">
+            鹏飞Daniel
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reactive/" rel="tag">reactive</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reactor/" rel="tag">reactor</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2020/05/03/4-reactor-tips/&title=《Reactor技巧4则》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2020/05/03/4-reactor-tips/&title=《Reactor技巧4则》 — 鹏飞Daniel的技术足迹&source=本篇文章旨在介绍一些不常用但又非常有用的Reactor Operator。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2020/05/03/4-reactor-tips/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Reactor技巧4则》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2020/05/03/4-reactor-tips/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2020/05/03/4-reactor-tips/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2020/05/03/n-ways-of-writing-word-hui/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">茴字的N种写法</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2020/04/08/logback-msteams-appender-plus/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">简单实现微软Teams的logback appender</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "ymjtakuY1KwMihG6FxtgO1K7-gzGzoHsz",
+            appKey: "iL3xdrITiNRcnSNxLGoFYs4j",
+            avatar: "mm",
+            placeholder: "来啊，造作啊!",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        授人玫瑰，手有余香~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechatpay.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechatpay.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>鹏飞Daniel &copy; 2020 - 2021</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2020/05/03/4-reactor-tips/&title=《Reactor技巧4则》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2020/05/03/4-reactor-tips/&title=《Reactor技巧4则》 — 鹏飞Daniel的技术足迹&source=本篇文章旨在介绍一些不常用但又非常有用的Reactor Operator。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2020/05/03/4-reactor-tips/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Reactor技巧4则》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2020/05/03/4-reactor-tips/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2020/05/03/4-reactor-tips/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACNUlEQVR42u3aQY7jMAwEwPz/01lgTgvsxukWkwEslU+GkbFVOnAoko9HfD1/ruTJ38//vW+ffPjCwMC4LeN5ebVLvH5D/vX8zRgYGOcwroPsdSi8Xm6yBfnbXj7HwMDAWAqC8yViYGBgTF6XhODkUJonoBgYGBiTI2h+3yaLXzmLY2Bg3JDRNgZ+8/6L/Q0MDIybMJ7ldZ0UJilgm1BGq8LAwNiacf2B5GNtmSwf3Ui2I9onDAyMmzPy4YZJ+X5eentzDMbAwNiaMS+TtUW0fICjHtTAwMDYmpEkbWtNgiThyzcuXwkGBsbejJz0qXDZDlvUjUwMDIwtGPlBMT9Y5sttnxdFNwwMjC0Y307m2uRycQQEAwPjGEZ7dExamO3S83e+DLgYGBjbMfJhi7XxiPlfFVuDgYFxDCOvzOWlsTZMt2vAwMA4gTEZa1g70K6V4SIeBgbGdowkdZs0DPJRibWRCwwMjBMY+SxGG8XrPmrZDHgz14aBgXEAox0OmxxB10JwcYjFwMC4OSMfCPteWT/fiJe/x8DAOJLRjlC04TX5Yh7oMTAw9masDUYkx938gJr/vii3YWBgbMR4lldbPssD9KiEh4GBsTWjLce3jck8sE7amRgYGCcwJkF27YA6H90oMkcMDIyNGHkQnKd9k/8AbwIuBgbG8Yw2gcs3pY2c/3mCgYGBEbcVk2PtWvL3pr+BgYFxAKMt1n+2cN8uHQMD4zTGWmNgMvI1b0LUAAwMjLsy/gBrazziHaZpPwAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+
+    <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+    <script>
+      if (window.mermaid) {
+        mermaid.initialize({theme: 'forest'});
+      }
+    </script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
