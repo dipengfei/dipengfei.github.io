@@ -88,20 +88,6 @@
 
   
   <url>
-    <loc>https://danielpf.me/tags/reactor/</loc>
-    <lastmod>2022-07-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://danielpf.me/tags/reactive/</loc>
-    <lastmod>2022-07-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://danielpf.me/tags/kotlin/</loc>
     <lastmod>2022-07-07</lastmod>
     <changefreq>daily</changefreq>
@@ -117,6 +103,20 @@
   
   <url>
     <loc>https://danielpf.me/tags/httpclient/</loc>
+    <lastmod>2022-07-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://danielpf.me/tags/reactor/</loc>
+    <lastmod>2022-07-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://danielpf.me/tags/reactive/</loc>
     <lastmod>2022-07-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -151,13 +151,6 @@
   </url>
   
   <url>
-    <loc>https://danielpf.me/tags/springboot/</loc>
-    <lastmod>2022-07-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://danielpf.me/tags/java/</loc>
     <lastmod>2022-07-07</lastmod>
     <changefreq>daily</changefreq>
@@ -178,6 +171,13 @@
     <priority>0.6</priority>
   </url>
   
+  <url>
+    <loc>https://danielpf.me/tags/springboot/</loc>
+    <lastmod>2022-07-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
 
   
   <url>
@@ -188,14 +188,14 @@
   </url>
   
   <url>
-    <loc>https://danielpf.me/categories/%E6%8A%80%E5%B7%A7/</loc>
+    <loc>https://danielpf.me/categories/%E5%AE%9E%E8%B7%B5/</loc>
     <lastmod>2022-07-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://danielpf.me/categories/%E5%AE%9E%E8%B7%B5/</loc>
+    <loc>https://danielpf.me/categories/%E6%8A%80%E5%B7%A7/</loc>
     <lastmod>2022-07-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
