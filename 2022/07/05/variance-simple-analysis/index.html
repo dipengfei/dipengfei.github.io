@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>型变浅析 | 鹏飞Daniel的技术足迹 | 尔曹身与名俱灭,不废江河万古流</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="kotlin,java,variance,generics">
+    <meta name="description" content="本文将结合示例代码简要介绍范型(Generics)及其可变性(Variance)的背景、定义，以及在Java与Kotlin中的不同表现，进而探讨类型擦除(Type Erasure)与Spring对范型依赖的处理(SpringGenerics Dependency)等高级主题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="型变浅析">
+<meta property="og:url" content="https://danielpf.me/2022/07/05/variance-simple-analysis/index.html">
+<meta property="og:site_name" content="鹏飞Daniel的技术足迹">
+<meta property="og:description" content="本文将结合示例代码简要介绍范型(Generics)及其可变性(Variance)的背景、定义，以及在Java与Kotlin中的不同表现，进而探讨类型擦除(Type Erasure)与Spring对范型依赖的处理(SpringGenerics Dependency)等高级主题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-05T10:53:33.000Z">
+<meta property="article:modified_time" content="2022-07-07T08:03:30.169Z">
+<meta property="article:author" content="鹏飞Daniel">
+<meta property="article:tag" content="kotlin">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="variance">
+<meta property="article:tag" content="generics">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="鹏飞Daniel的技术足迹" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar-yumao.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">鹏飞Daniel</h5>
+          <a href="mailto:dipengfei1982@gmail.com" title="dipengfei1982@gmail.com" class="mail">dipengfei1982@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/dipengfei" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://www.linkedin.com/in/daniel-pf" target="_blank" >
+                <i class="icon icon-lg icon-linkedin"></i>
+                Linkedin
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">型变浅析</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">型变浅析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2022-07-05T10:53:33.000Z" itemprop="datePublished" class="page-time">
+  2022-07-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#关键字-Key-Words"><span class="post-toc-number">1.</span> <span class="post-toc-text">关键字(Key Words)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#型变定义"><span class="post-toc-number">2.</span> <span class="post-toc-text">型变定义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Java中的型变"><span class="post-toc-number">3.</span> <span class="post-toc-text">Java中的型变</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Kotlin中的型变"><span class="post-toc-number">4.</span> <span class="post-toc-text">Kotlin中的型变</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#类型擦除-Type-Erasure"><span class="post-toc-number">5.</span> <span class="post-toc-text">类型擦除(Type Erasure)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#范型依赖-Generics-Dependency"><span class="post-toc-number">6.</span> <span class="post-toc-text">范型依赖(Generics Dependency)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">7.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-variance-simple-analysis"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">型变浅析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2022-07-05 18:53:33" datetime="2022-07-05T10:53:33.000Z"  itemprop="datePublished">2022-07-05</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>本文将结合示例代码简要介绍范型(Generics)及其可变性(Variance)的背景、定义，以及在Java与Kotlin中的不同表现，进而探讨类型擦除(Type Erasure)与Spring对范型依赖的处理(Spring<br>Generics Dependency)等高级主题。</p>
+<a id="more"></a>
+
+<h3 id="关键字-Key-Words"><a href="#关键字-Key-Words" class="headerlink" title="关键字(Key Words)"></a>关键字(Key Words)</h3><p>本文将涉及以下关键字：</p>
+<ul>
+<li>面向对象编程的三大原则(<a href="https://www.d.umn.edu/~gshute/softeng/presentations/oo-principles.xhtml" target="_blank" rel="noopener">OOP 3 Principles</a>)<ul>
+<li>封装性(Encapsulation)</li>
+<li>继承性(Inheritance)</li>
+<li>多态性(Polymorphism)</li>
+</ul>
+</li>
+<li>软件系统设计的三大原则(Software Design 3 Principles)<ul>
+<li>开-闭原则(<a href="https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle" target="_blank" rel="noopener">OCP</a>)</li>
+<li>里氏代换原则(<a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle" target="_blank" rel="noopener">LSP</a>)</li>
+<li>依赖倒转原则(<a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle" target="_blank" rel="noopener">DIP</a>)</li>
+</ul>
+</li>
+<li>时机(Timing)<ul>
+<li>编译时(compile-time)</li>
+<li>运行时(runtime)</li>
+</ul>
+</li>
+<li>PECS<ul>
+<li>Producer -&gt; Extends</li>
+<li>Consumer -&gt; Super</li>
+</ul>
+</li>
+<li>型变(Variance)<ul>
+<li>协变(Covariance)</li>
+<li>逆变(Contravariance)</li>
+<li>不变(invariance)</li>
+</ul>
+</li>
+<li>型变位置(Variance Site)<ul>
+<li>声明处型变(Declaration-site variance)<ul>
+<li>Consumer -&gt; in,</li>
+<li>Producer -&gt; out</li>
+</ul>
+</li>
+<li>使用处型变(Use-site variance)<ul>
+<li>投影(Projections)<ul>
+<li>类型投影(Type Projections)</li>
+<li>星投影(Star Projections)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>类型擦除(Type Erasure)</li>
+</ul>
+<h3 id="型变定义"><a href="#型变定义" class="headerlink" title="型变定义"></a>型变定义</h3><p>这里我们给出一个基于LSP的型变定义。</p>
+<blockquote>
+<p>给定基类<em>Base</em>，记作<em>B</em>，<em>B</em>的派生类<em>Derived</em>，记作<em>D</em>，二者满足LSP，记作<em>B &gt; D</em>。给定映射关系<em>R</em>，分别作用于<em>B</em>、<em>D</em>，得到<em>R(B)</em>、<em>R(D)</em>，</p>
+<ul>
+<li>如果得到R(B) &gt; R(D)，那么关系R为协变(Covariant)的;</li>
+<li>如果得到R(B) &lt; R(D)，那么关系R为逆变(Contravariant)的;</li>
+<li>如果得到R(B) &lt;&gt; R(D)，那么关系R为不型变(Invariant)的。</li>
+</ul>
+</blockquote>
+<p>在本文中讨论的范围内，关系R主要表现为</p>
+<ul>
+<li>数组(Array)</li>
+<li>范型(Generics)</li>
+</ul>
+<h3 id="Java中的型变"><a href="#Java中的型变" class="headerlink" title="Java中的型变"></a>Java中的型变</h3><p>在Java中，数组(Array)被设计成协变(Covariance)的，而范型(Generics)被设计成不变(Invariant)的，下面我们会举例说明这样设计的优缺点。<br>首先看数组(Array)，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// it can be compiled, as Array in Java is covariant, upper cast is ok</span></span><br><span class="line">Object[] objs = <span class="keyword">new</span> Integer[<span class="number">10</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// ArrayStoreException occurrs!</span></span><br><span class="line">objs[<span class="number">0</span>] = <span class="string">"abc"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>从上面的代码可以看出，数组(Array)被设计成协变(Covariant)的，有以下优点(Pros)：</p>
+<ul>
+<li>是符合直觉的(intuitive)。</li>
+<li>变量、参数可以灵活(flexibility)地接收字类型实体。</li>
+</ul>
+<p>但也存在缺点(Cons)：</p>
+<ul>
+<li>在某些操作下，类型安全(type safe)会被破坏。</li>
+</ul>
+<p>接下来再看范型(Generics)，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PoorBox</span>&lt;<span class="title">T</span>&gt; </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// can't compile, as Generics is invariant.</span></span><br><span class="line">PoorBox&lt;Number&gt; numberPoorBox = <span class="keyword">new</span> PoorBox&lt;Integer&gt;();</span><br></pre></td></tr></table></figure>
+
+<p>从上面的代码可以看出，范型(Generics)被设计成不型变(Invariant)的，与数组(Array)相比，优缺点刚好相反，缺点(Cons)：</p>
+<ul>
+<li>反直觉(counterintuitive)。</li>
+<li>变量、参数丧失灵活性。</li>
+</ul>
+<p>优点(Pros)么：</p>
+<ul>
+<li>类型安全(type safe)得以保证。</li>
+</ul>
+<p>综合数组(Array)与范型(Generics)，类型被设计为协变(Covariant)的,可以保证足够的足够的灵活性(flexibility)，但需要在类型安全(type safe)做出额外考量。而类型安全(type safe)<br>又与特定的<em>操作</em>有关。</p>
+<p>为保证类型安全(type safe)，Java引入边界通配符(Bounded Wild Cards)来增强范型(Generics)系统：</p>
+<ul>
+<li><em>B&lt;? extends T&gt;</em>使当前类型<em>B</em>在参数<em>T</em>上是协变(Covariance)的，编译器保证只能读取(read)类型<em>B</em>中的数据，这时类型<em>B</em>只能为生产者(producer);</li>
+<li><em>B&lt;? super T&gt;</em>使当前类型<em>B</em>在参数<em>T</em>上是逆变(Contravariant)的，编译器保证只能读取(write)类型<em>B</em>中的数据，这时类型<em>B</em>只能为消费者(consumer)。</li>
+</ul>
+<p>以上信息概括起来，就是<em>PECS*原则，以下内容引用自Effective Java, 3rd Edition, Item 31: *Use bounded wildcards to increase API flexibility</em>.</p>
+<blockquote>
+<p>For maximum flexibility, use wildcard types on input parameters that represent producers or consumers. If an input<br>parameter is both a producer and a consumer, then wildcard types will do you no good: you need an exact type match,<br>which is what you get without any wildcards. Here is a mnemonic to help you remember which wildcard type to use:<br><strong><em>PECS stands for producer-extends, consumer-super.</em></strong></p>
+</blockquote>
+<p>下面示例中的<em>copyFrom</em>与<em>copyTo</em>方法依照<em>PECS</em>原则创建</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PoorBox</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> T value;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">getValue</span><span class="params">()</span> </span>&#123;<span class="keyword">return</span> value;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(T t)</span> </span>&#123;<span class="keyword">this</span>.value = t;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">copyFrom</span><span class="params">(PoorBox&lt;? extends T&gt; source)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = source.getValue();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">copyTo</span><span class="params">(PoorBox&lt;? <span class="keyword">super</span> T&gt; dest)</span> </span>&#123;</span><br><span class="line">        dest.setValue(<span class="keyword">this</span>.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Kotlin中的型变"><a href="#Kotlin中的型变" class="headerlink" title="Kotlin中的型变"></a>Kotlin中的型变</h3><p>Kotlin按照自己的设计思路，结合Java语言中范型(Generics)系统的优缺点，给出了自己的实现方式。</p>
+<ol>
+<li>Kotlin把数组也设计成了范型类，统一了设计思路，避免使用两套不同的规则。</li>
+<li>Kotlin引入了<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-nothing.html" target="_blank" rel="noopener">Nothing</a><br>类，为所有类型设定了一个下界。</li>
+<li>Kotlin引入了<em>声明处型变(Declaration-site variance)</em>，使得符合<em>PECS</em>原则的类型，在声明处即可获得型变。</li>
+<li>Kotlin引入了<em>使用处型变(Use-site variance)</em>和<em>类型投影(Type Projections)</em>，使得不符合<em>PECS</em>原则的类型，在使用处(作为函数参数)即可获得型变。其中<em>星投影</em>比较特殊，即便对类型一无所知，在使用<em>星投影</em>时，仍然可以保证类型安全，因为<em>星投影</em>会限制读写：<ul>
+<li>对于<strong>协变(Covariant)</strong>类型T&lt;out E : Upper&gt;，T&lt;*&gt;相当于T&lt;out Upper&gt;，从T&lt;*&gt;中读取值一定是安全的，但类型会上转型至E的上界，如果E没有上界，会上转型至Any?。</li>
+<li>对于<strong>逆变(Contravariant)</strong>类型T&lt;in E&gt;，T&lt;*&gt;相当于T&lt;in Nothing&gt;，这时无法向T&lt;*&gt;中写入任何值，因为Nothing无法被实例化。</li>
+<li>对于<strong>不变(Invariant)</strong>类型T&lt;E : Upper&gt;，读取时相当于T&lt;out Upper&gt;，写入时相当于T&lt;in Nothing&gt;。</li>
+</ul>
+</li>
+<li>Kotlin引入了<em>泛型约束(Generic constraints)</em>，相比于Java的类型上界(upper bound)只能指定单一上界，Kotlin中可以定义多个上界(upper bound)<br>，这在约束类型实现多个接口时十分有用。</li>
+</ol>
+<blockquote>
+<p>注意，这里说Nothing是所有类型的下界，而不是子类，并且Nothing不能被实例化。与<em>星投影</em>类似，<em>Nothing</em>在编译后，也会被编译成?类型，类似Java语言中的<em>Raw Type</em>。</p>
+</blockquote>
+<p>根据上面的论述，我们可以依照LSP来总结一下Kotlin中的型变规则。<br>给定范型T&lt;E&gt;，以及具体类型String、Number、Int和Any?，那么</p>
+<ol>
+<li>无论T在E上是协变、逆变或不变，都有T&lt;*&gt; = T&lt;Nothing&gt; = T&lt;?&gt;，而T&lt;?&gt; &gt; T&lt;Other&gt;, Other = String、Number、Int以及Any?。</li>
+<li>假设T在E上是<strong>协变(Covariant)</strong>的，则T&lt;Any?&gt; &gt; T&lt;Number&gt; &gt; T&lt;Int&gt;，T&lt;Any?&gt; &gt; T&lt;String&gt;。</li>
+<li>假设T在E上是<strong>逆变(Contravariant)</strong>的，则T&lt;Any?&gt; &lt; T&lt;Number&gt; &lt; T&lt;Int&gt;，T&lt;Any?&gt; &lt; T&lt;String&gt;。</li>
+<li>假设T在E上是<strong>不变(Invariant)</strong>的，则T&lt;Any?&gt;、T&lt;Number&gt;、T&lt;Int&gt;和T&lt;String&gt;无大小判定关系。</li>
+</ol>
+<h3 id="类型擦除-Type-Erasure"><a href="#类型擦除-Type-Erasure" class="headerlink" title="类型擦除(Type Erasure)"></a>类型擦除(Type Erasure)</h3><p>作为构建于JVM之上的编程语言，Java和Kotlin都无法避免<em>类型擦除(Type Erasure)</em>。为保证类型安全，基于范型(Generics)的类型检查，只发生在编译时(compile-time)，运行时(runtime)<br>泛型类型的实例不保留关于其类型实参的任何信息。因此，我们无法在Java中使用<em>instanceof</em>或者在Kotlin中使用<em>is</em>来在运行时(runtime)检测一个泛型类型的实例是否通过指定类型参数所创建。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> integerBox = <span class="keyword">new</span> Box&lt;Integer&gt;();</span><br><span class="line"><span class="comment">// you can only do this</span></span><br><span class="line"><span class="keyword">if</span> (integerBox <span class="keyword">instanceof</span> Box) &#123;&#125;</span><br><span class="line"><span class="comment">// but can not do this</span></span><br><span class="line"><span class="keyword">if</span> (integerBox <span class="keyword">instanceof</span> Box&lt;Integer&gt;) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>除此之外，转型(casting)时，虽然可以转型至范型类型，编译器会对非受检类型转换发出警告，因为这种转型(casting)有可能时不安全的。在实际使用中，为避免运行时出现<em>ClassCastException</em>，可以借助<em>TypeReference</em>，很多库都会提供类似功能，例如jackson，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> json = <span class="string">"&#123;\"value\" : 1.5&#125;"</span>;</span><br><span class="line"><span class="keyword">var</span> objectMapper = ...;</span><br><span class="line"><span class="keyword">var</span> doublePoorBox = objectMapper.readValue(json, <span class="keyword">new</span> TypeReference&lt;PoorBox&lt;Double&gt;&gt;() &#123;&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>Spring中的<a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html" target="_blank" rel="noopener">RestTemplate</a>也有类似的用法，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ResponseEntity&lt;PoorBox&lt;Double&gt;&gt; response = </span><br><span class="line">       restTemplate.exchange(url, httpMethod.POST, requestEntity, </span><br><span class="line">               <span class="keyword">new</span> ParameterizedTypeReference&lt;PoorBox&lt;Double&gt;&gt;()&#123;&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="范型依赖-Generics-Dependency"><a href="#范型依赖-Generics-Dependency" class="headerlink" title="范型依赖(Generics Dependency)"></a>范型依赖(Generics Dependency)</h3><p>Spring中支持注入范型Bean，并充分支持型变(Variance)。例如注入List时，Spring会根据范型参数和型变来过滤候选Bean。以下为简单的示例，</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// generics class, Declaration-site variance, out -&gt; covariant</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OutBox</span>&lt;<span class="type">out T</span>&gt;</span>(<span class="keyword">val</span> value: T)</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BoxConfig</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">intOutBox</span><span class="params">()</span></span> = OutBox(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">numberOutBox</span><span class="params">()</span></span> = OutBox&lt;Number&gt;(<span class="number">2.5</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">stringOutBox</span><span class="params">()</span></span> = OutBox(<span class="string">"out"</span>)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BoxBeansHolder</span></span>(</span><br><span class="line">    <span class="keyword">val</span> intOutBoxList: List&lt;OutBox&lt;<span class="built_in">Int</span>&gt;&gt;, <span class="comment">// 1 bean injected: OutBox&lt;Number&gt;</span></span><br><span class="line">    <span class="keyword">val</span> numberOutBoxList: List&lt;OutBox&lt;Number&gt;&gt;, <span class="comment">// 2 beans injected: OutBox&lt;Number&gt;, OutBox&lt;Int&gt; </span></span><br><span class="line">    <span class="keyword">val</span> anyOutBoxList: List&lt;OutBox&lt;Any?&gt;&gt; <span class="comment">// 3 beans injected: OutBox&lt;Number&gt;, OutBox&lt;Int&gt;, OutBox&lt;String&gt;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>范型(Generics)几乎是每种高级编程语言需要考虑的特性，而可变性(Variance)又伴随范型(Generics)而生，Java和Kotlin也给出了自己的实现原则。</p>
+<ol>
+<li>范型(Generics)出现在JDK 1.5，Java为支持范型并保证最大的向下兼容性，把范型设计成了编译后类型擦除(Type Erasure)，在可变性(Variance)方面，为保证类型安全，选择了<strong>不型变(invariance)</strong>。</li>
+<li>为保证API的灵活性，Java引入了范型边界和<strong>PECS</strong>原则。</li>
+<li>Kotlin意识到了Java语言在范型(Generics)方面的问题，引入了<strong>声明处型变(Declaration-site variance)</strong>和<strong>使用处型变(Use-site variance)</strong>，总体说来是进步的，但在客观上也增加了语言的复杂性。</li>
+<li>Spring等框架也充分意识到型变(Variance)的重要性，在注入范型Bean时，按照型变原则来判定候选Bean。</li>
+</ol>
+<p>更详细的示例，请参考这个<a href="https://github.com/dipengfei/spring-loves-kt" target="_blank" rel="noopener">代码仓库</a>。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2022-07-07T08:03:30.169Z" itemprop="dateUpdated">2022-07-07 16:03:30</time>
+</span><br>
+
+
+        
+        引用请注明文章出处：<a href="/2022/07/05/variance-simple-analysis/" target="_blank" rel="external">https://danielpf.me/2022/07/05/variance-simple-analysis/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://danielpf.me">
+            <img src="/img/avatar-yumao.jpg" alt="鹏飞Daniel">
+            鹏飞Daniel
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/generics/" rel="tag">generics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/variance/" rel="tag">variance</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2022/07/05/variance-simple-analysis/&title=《型变浅析》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2022/07/05/variance-simple-analysis/&title=《型变浅析》 — 鹏飞Daniel的技术足迹&source=本文将结合示例代码简要介绍范型(Generics)及其可变性(Variance)的背景、定义，以及在Java与Kotlin中的不同表现，进而探讨类型擦除(..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2022/07/05/variance-simple-analysis/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《型变浅析》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2022/07/05/variance-simple-analysis/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2022/07/05/variance-simple-analysis/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2021/04/19/you-dont-know-springboot-01/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">你不知道的SpringBoot (Part 1)</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "ymjtakuY1KwMihG6FxtgO1K7-gzGzoHsz",
+            appKey: "iL3xdrITiNRcnSNxLGoFYs4j",
+            avatar: "mm",
+            placeholder: "来啊，造作啊!",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        授人玫瑰，手有余香~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechatpay.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechatpay.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>鹏飞Daniel &copy; 2020 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://danielpf.me/2022/07/05/variance-simple-analysis/&title=《型变浅析》 — 鹏飞Daniel的技术足迹&pic=https://danielpf.me/img/avatar-yumao.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://danielpf.me/2022/07/05/variance-simple-analysis/&title=《型变浅析》 — 鹏飞Daniel的技术足迹&source=本文将结合示例代码简要介绍范型(Generics)及其可变性(Variance)的背景、定义，以及在Java与Kotlin中的不同表现，进而探讨类型擦除(..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://danielpf.me/2022/07/05/variance-simple-analysis/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《型变浅析》 — 鹏飞Daniel的技术足迹&url=https://danielpf.me/2022/07/05/variance-simple-analysis/&via=https://danielpf.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://danielpf.me/2022/07/05/variance-simple-analysis/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMklEQVR42u3a0W6DMAxG4b7/S7PbSlvh/DadhH1yhWhJ8zHJi+28Xngcb+P3nff7nz4lz36a7bYhQ4aMxzKO00EWfT7z+evgsIs1yJAhYwHjfBFpqCWL46GZvCAZMmTION/AkUBMMOfXMmTIkMEZJH8kPPJ9GTJkyEiT2H5w7G9Db8jFZciQ8UBGWjj7z+uv9DdkyJDxKMYRDlL0r23+eJD9Y1UyZMgYzeABjqSjabjsBFwZMmTsYZBCGC+i1dJgfhQjONMhQ4aMQQy+pSPf5Mcv7moSXPzfkCFDxghGJ+Cm16QJyjejMmTI2MPotwo6R1HJDPxghwwZMqYyeEitbQprpboUJkOGjNkM0jKsRW6CJ7MFaa0MGTIWMHhzkYdjUm7jLyXuxMqQIWMog0+UlvX7pbQLsAwZMhYw0oQ2bSqQedLWqQwZMvYw4nQRP8UDN+lUBH8TGTJkjGPUAmKt3M+R8euQIUPGGgYpjfV//q7QfNHfkCFDxiBGLezyBLgTZNP2qgwZMqYyak3EfhJbS5tREitDhozRDB7sarD0TtAElSFDxjJG2p6sHcsgAbp42EKGDBmDGEc4asknX1xa/pMhQ8YGBh/8sFea4vIXlAZ3GTJkTGLUlsiLcelGsLZxlCFDxgZGrYjPU9Za2sxXK0OGDBnkgEWnfMaT2y8GXBkyZAxikKIYud/JuT+2B2TIkDGaQX6mFhz5s+mRDhkyZOxhpKkjL5nVNoW8ACdDhowFjB+1CAPxc/NL6QAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+
+    <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+    <script>
+      if (window.mermaid) {
+        mermaid.initialize({theme: 'forest'});
+      }
+    </script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
